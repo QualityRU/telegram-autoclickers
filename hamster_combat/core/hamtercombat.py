@@ -8,6 +8,7 @@ import requests
 from config import SupportedPromoGames, telegramBotLogging
 from core.logger import log
 from core.utilities import (
+    CalculateCardProfitCoefficient,
     DailyCipherDecode,
     SortUpgrades,
     TextToMorseCode,
