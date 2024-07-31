@@ -24,7 +24,6 @@ def main():
                 ),
             ).start()
     except Exception as e:
-        print(e)
         print(
             Fore.RED
             + '\n\tОшибка чтения ACCOUNTS, ссылки указаны некорректно!'

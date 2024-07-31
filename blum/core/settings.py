@@ -2,7 +2,7 @@ COINS = [220, 240]
 
 HEADERS = {
     'Accept': 'application/json, text/plain, */*',
-    'Accept-Encoding': 'gzip, deflate, br, zstd',
+    # 'Accept-Encoding': 'gzip, deflate, br, zstd',
     'Accept-Language': 'ru,en;q=0.9,en-GB;q=0.8,en-US;q=0.7',
     'priority': 'u=1, i',
     'sec-ch-ua': 'Not)A;Brand";v="99", "Microsoft Edge";v="127", "Chromium";v="127", "Microsoft Edge WebView2";v="127',
