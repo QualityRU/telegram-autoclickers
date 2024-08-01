@@ -23,7 +23,7 @@ def RunAccounts():
 
         if AccountsRecheckTime < 1 and MaxRandomDelay < 1:
             log.error(
-                f'AccountsRecheckTime and MaxRandomDelay values are set to 0, bot will close now.'
+                'AccountsRecheckTime and MaxRandomDelay values are set to 0, bot will close now.'
             )
             return
 

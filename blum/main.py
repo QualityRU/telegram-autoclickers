@@ -23,7 +23,7 @@ def main():
                     URL,
                 ),
             ).start()
-    except Exception as e:
+    except Exception:
         print(
             Fore.RED
             + '\n\tОшибка чтения ACCOUNTS, ссылки указаны некорректно!'

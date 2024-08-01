@@ -1,3 +1,4 @@
+import base64
 import datetime
 import json
 import random
@@ -621,7 +622,7 @@ class HamsterKombatAccount:
             )
             return
 
-        if AccountConfigData['dailyKeysMiniGame']['isClaimed'] == True:
+        if AccountConfigData['dailyKeysMiniGame']['isClaimed']:
             log.info(
                 f'[{self.account_name}] Daily keys mini game already claimed.'
             )
@@ -638,7 +639,7 @@ class HamsterKombatAccount:
             )
             return
 
-        ## check timer.
+        # check timer.
         url = 'https://api.hamsterkombatgame.io/clicker/start-keys-minigame'
 
         headers = {
@@ -674,7 +675,7 @@ class HamsterKombatAccount:
             )
             return
 
-        if response['dailyKeysMiniGame']['isClaimed'] == True:
+        if response['dailyKeysMiniGame']['isClaimed']:
             log.info(
                 f'[{self.account_name}] Daily keys mini game already claimed.'
             )
@@ -1133,7 +1134,7 @@ class HamsterKombatAccount:
             log.info(f'[{self.account_name}] Tapping completed successfully.')
 
         if self.config['auto_get_daily_cipher'] and DailyCipher != '':
-            if AccountConfigData['dailyCipher']['isClaimed'] == True:
+            if AccountConfigData['dailyCipher']['isClaimed']:
                 log.info(
                     f'\033[1;34m[{self.account_name}] Daily cipher already claimed.\033[0m'
                 )
@@ -1163,7 +1164,7 @@ class HamsterKombatAccount:
                 log.error(f'[{self.account_name}] Failed to get daily task.')
                 return
 
-            if streak_days['isCompleted'] == True:
+            if streak_days['isCompleted']:
                 log.info(
                     f'\033[1;34m[{self.account_name}] Daily task already completed.\033[0m'
                 )
@@ -1188,7 +1189,7 @@ class HamsterKombatAccount:
             selected_task = None
             for task in tasksResponse['tasks']:
                 link = task.get('link', '')
-                if task['isCompleted'] == False and ('https://' in link):
+                if not task['isCompleted'] and ('https://' in link):
                     log.info(
                         f'[{self.account_name}] Attempting to complete Youtube Or Twitter task...'
                     )
