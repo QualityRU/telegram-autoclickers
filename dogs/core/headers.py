@@ -1,0 +1,18 @@
+HEADERS = {
+    'accept': 'application/json',
+    # 'accept-encoding': 'gzip, deflate, br, zstd',
+    'accept-language': 'ru-RU,ru;q=0.9,en-XA;q=0.8,en;q=0.7,en-US;q=0.6',
+    # 'content-length': 378,
+    'Content-Type': 'text/plain;charset=UTF-8',
+    # 'dnt': 1,
+    'origin': 'https://onetime.dog',
+    'priority': 'u=1, i',
+    'referer': 'https://onetime.dog/',
+    'sec-ch-ua': 'Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'same-site',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36',
+}

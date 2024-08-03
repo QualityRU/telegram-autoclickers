@@ -149,15 +149,10 @@ class BlumAccount:
         Headers_bear['authorization'] = f'Bearer {self.Token}'
 
         try:
-            res = post(URL, headers=Headers_bear, proxies=self.Proxy)
-
-            try:
-                res.json()['startTime']
-                self.Logging('Success', self.Name, '🟢', 'Фарм монет запущен!')
-            except Exception:
-                self.Logging(
-                    'Warning', self.Name, '🟡', 'Фарм монет уже запущен!'
-                )
+            post(URL, headers=Headers_bear, proxies=self.Proxy).json()[
+                'startTime'
+            ]
+            self.Logging('Success', self.Name, '🟢', 'Фарм монет запущен!')
         except Exception:
             self.Logging('Error', self.Name, '🔴', 'Фарм монет не запущен!')
 
@@ -351,6 +346,7 @@ class BlumAccount:
                                 Task['status'] == 'READY_FOR_CLAIM'
                             ):   # Если задание уже начато
                                 Claim_Tasks = self.Claim_Tasks(Task['id'])
+
                                 if Claim_Tasks['Status']:
                                     self.Logging(
                                         'Success',

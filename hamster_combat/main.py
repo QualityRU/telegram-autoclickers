@@ -3,7 +3,7 @@ import random
 import time
 
 from config import AccountList, AccountsRecheckTime, MaxRandomDelay
-from core.hamtercombat import HamsterKombatAccount
+from core.api import HamsterKombatAccount
 from core.logger import log
 
 

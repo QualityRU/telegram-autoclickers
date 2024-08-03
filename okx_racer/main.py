@@ -1,8 +1,8 @@
 from colorama import Fore
-from core.okx import OKX
+from core.api import OKXAcount
 
 if __name__ == '__main__':
-    okx = OKX()
+    okx = OKXAcount()
     try:
         okx.main()
     except Exception as e:

@@ -9,7 +9,7 @@ from colorama import Fore, init
 init(autoreset=True)
 
 
-class OKX:
+class OKXAcount:
     def __init__(self):
         self.session = requests.Session()
 

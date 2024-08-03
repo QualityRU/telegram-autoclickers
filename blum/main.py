@@ -4,7 +4,7 @@ from threading import Thread
 
 from colorama import Fore
 from config import ACCOUNTS
-from core.blum import BlumAccount
+from core.api import BlumAccount
 
 
 def main():

@@ -35,6 +35,7 @@ class HamsterKombatAccount:
         self.telegram_chat_id = AccountData['telegram_chat_id']
         self.totalKeys = 0
         self.balanceKeys = 0
+        self.availableSkins = {}
 
     def SendTelegramLog(self, message, level):
         if (
@@ -307,6 +308,7 @@ class HamsterKombatAccount:
         self.earnPassivePerHour = account_data['clickerUser'][
             'earnPassivePerHour'
         ]
+        self.availableSkins = account_data['clickerUser']['skin']
         if 'balanceKeys' in account_data['clickerUser']:
             self.balanceKeys = account_data['clickerUser']['balanceKeys']
         else:
@@ -442,6 +444,53 @@ class HamsterKombatAccount:
 
         # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200)
+
+    # Sending get-skin request
+    def GetSkinRequest(self):
+        url = 'https://api.hamsterkombatgame.io/clicker/get-skin'
+        headers = {
+            'Access-Control-Request-Headers': self.Authorization,
+            'Access-Control-Request-Method': 'POST',
+        }
+
+        # Send OPTIONS request
+        self.HttpRequest(url, headers, 'OPTIONS', 204)
+
+        headers = {
+            'Accept': 'application/json',
+            'Authorization': self.Authorization,
+            'Content-Type': 'application/json',
+        }
+
+        # Send POST request
+        return self.HttpRequest(url, headers, 'POST', 200)
+
+    # Sending buy-skin request
+    def BuySkinRequest(self, skinId):
+        url = 'https://api.hamsterkombatgame.io/clicker/buy-skin'
+        headers = {
+            'Access-Control-Request-Headers': self.Authorization,
+            'Access-Control-Request-Method': 'POST',
+        }
+
+        # Send OPTIONS request
+        self.HttpRequest(url, headers, 'OPTIONS', 204)
+
+        headers = {
+            'Accept': 'application/json',
+            'Authorization': self.Authorization,
+            'Content-Type': 'application/json',
+        }
+
+        payload = json.dumps(
+            {
+                'skinId': skinId,
+                'timestamp': int(datetime.datetime.now().timestamp() * 1000),
+            }
+        )
+
+        # Send POST request
+        return self.HttpRequest(url, headers, 'POST', 200, payload)
 
     def ClaimDailyCipherRequest(self, DailyCipher):
         url = 'https://api.hamsterkombatgame.io/clicker/claim-daily-cipher'
@@ -1080,6 +1129,17 @@ class HamsterKombatAccount:
             )
             return
 
+        log.info(f'[{self.account_name}] Getting account skins...')
+        skinsResponse = self.GetSkinRequest()
+
+        if skinsResponse is None:
+            log.error(f'[{self.account_name}] Failed to get skins list.')
+            self.SendTelegramLog(
+                f'[{self.account_name}] Failed to get skins list.',
+                'other_errors',
+            )
+            return
+
         log.info(f'[{self.account_name}] Getting account tasks...')
         tasksResponse = self.ListTasksRequest()
 
@@ -1230,6 +1290,36 @@ class HamsterKombatAccount:
             log.info(
                 f'[{self.account_name}] Account Balance Coins: {number_to_string(self.balanceCoins)}, Available Taps: {self.availableTaps}, Max Taps: {self.maxTaps}, Total Keys: {self.totalKeys}, Balance Keys: {self.balanceKeys}'
             )
+
+        # Start skins upgrades
+        if (
+            self.config['auto_get_skin']
+            and 'skins' in AccountConfigData['clickerConfig']
+        ):
+            log.info(f'[{self.account_name}] Starting to get skin...')
+            self.getAccountData()
+            sorted_skins = sorted(
+                AccountConfigData['clickerConfig']['skins'],
+                key=lambda x: x['price'],
+            )
+
+            for skin in sorted_skins:
+                skins_available = [
+                    val
+                    for sublist in self.availableSkins['available']
+                    for val in sublist.values()
+                ]
+                if skin['id'] != 'skin0' and skin['id'] not in skins_available:
+                    if self.balanceCoins < skin['price']:
+                        continue
+                    time.sleep(2)
+                    buySkinResponse = self.BuySkinRequest(skin['id'])
+
+                    if buySkinResponse:
+                        log.info(
+                            f"[{self.account_name}] Skin {skin['name']} get price {skin['price']}"
+                        )
+                        self.getAccountData()
 
         # Start buying upgrades
         if not self.config['auto_upgrade']:
