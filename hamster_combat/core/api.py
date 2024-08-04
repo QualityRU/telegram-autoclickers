@@ -1250,7 +1250,10 @@ class HamsterKombatAccount:
             log.info(f'[{self.account_name}] Checking for available task...')
             selected_task = None
             for task in tasksResponse['tasks']:
-                link = task.get('link', '')
+                if task.get('linksWithLocales'):
+                    link = task.get('linksWithLocales')[0].get('link', '')
+                else:
+                    link = task.get('link', '')
                 if not task['isCompleted'] and ('https://' in link):
                     log.info(
                         f'[{self.account_name}] Attempting to complete Youtube Or Twitter task...'
