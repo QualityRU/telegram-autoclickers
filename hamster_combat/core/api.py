@@ -36,6 +36,7 @@ class HamsterKombatAccount:
         self.totalKeys = 0
         self.balanceKeys = 0
         self.availableSkins = {}
+        self.level = 0
 
     def SendTelegramLog(self, message, level):
         if (
@@ -309,6 +310,7 @@ class HamsterKombatAccount:
             'earnPassivePerHour'
         ]
         self.availableSkins = account_data['clickerUser']['skin']
+        self.level = account_data['clickerUser']['level']
         if 'balanceKeys' in account_data['clickerUser']:
             self.balanceKeys = account_data['clickerUser']['balanceKeys']
         else:
@@ -1309,7 +1311,11 @@ class HamsterKombatAccount:
                     for sublist in self.availableSkins['available']
                     for val in sublist.values()
                 ]
-                if skin['id'] != 'skin0' and skin['id'] not in skins_available:
+                if (
+                    skin['id'] != 'skin0'
+                    and skin['id'] not in skins_available
+                    and skin['condition']['level'] <= self.level
+                ):
                     if self.balanceCoins < skin['price']:
                         continue
                     time.sleep(2)
