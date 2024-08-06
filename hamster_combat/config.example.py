@@ -59,10 +59,6 @@ AccountList = [
     # },
 ]
 
-SupportedPromoGames = {
-    '43e35910-c168-4634-ad4f-52fd764a843f': 'Bike Ride 3D in Hamster FAM',
-}
-
 # ---------------------------------------------#
 # Telegram Logging
 # By enabling this feature, you will receive logs in your Telegram account.
