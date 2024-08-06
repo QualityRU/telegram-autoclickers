@@ -6,7 +6,13 @@ import time
 import uuid
 
 import requests
-from config import SupportedPromoGames, telegramBotLogging
+from config import (
+    AccountList,
+    AccountsRecheckTime,
+    MaxRandomDelay,
+    SupportedPromoGames,
+    telegramBotLogging,
+)
 from core.logger import log
 from core.utilities import (
     CalculateCardProfitCoefficient,
@@ -113,11 +119,11 @@ class HamsterKombatAccount:
                     f'[{self.account_name}] Invalid method: {method}',
                     'http_errors',
                 )
-                return False
+                return None
 
             if response.status_code != validStatusCodes:
                 if ignore_errors:
-                    return False
+                    return None
 
                 log.error(
                     f'[{self.account_name}] Status code is not {validStatusCodes}'
@@ -127,7 +133,7 @@ class HamsterKombatAccount:
                     f'[{self.account_name}] Status code is not {validStatusCodes}',
                     'http_errors',
                 )
-                return False
+                return None
 
             if method == 'OPTIONS':
                 return True
@@ -673,7 +679,7 @@ class HamsterKombatAccount:
             )
             return
 
-        if AccountConfigData['dailyKeysMiniGame']['isClaimed']:
+        if AccountConfigData['dailyKeysMiniGame']['isClaimed'] == True:
             log.info(
                 f'[{self.account_name}] Daily keys mini game already claimed.'
             )
@@ -726,7 +732,7 @@ class HamsterKombatAccount:
             )
             return
 
-        if response['dailyKeysMiniGame']['isClaimed']:
+        if response['dailyKeysMiniGame']['isClaimed'] == True:
             log.info(
                 f'[{self.account_name}] Daily keys mini game already claimed.'
             )
@@ -853,25 +859,24 @@ class HamsterKombatAccount:
             ] in SupportedPromoGames and self.CheckPlayGroundGameState(
                 promo, response
             ):
-                if promo['promoId'] == '43e35910-c168-4634-ad4f-52fd764a843f':
+                promoData = SupportedPromoGames[promo['promoId']]
+                log.info(
+                    f"[{self.account_name}] Starting {promoData['name']} Playground game..."
+                )
+                time.sleep(1)
+                promoCode = self.GetPlayGroundGameKey(promoData)
+                if promoCode is not None:
                     log.info(
-                        f'[{self.account_name}] Starting Bike Ride 3D in Hamster FAM...'
+                        f"\033[1;34m[{self.account_name}] {promoData['name']} key: {promoCode}\033[0m"
                     )
                     time.sleep(2)
-                    promoCode = self.GetPlayGroundBikeRideKey(promo['promoId'])
-                    if promoCode is not None:
-                        log.info(
-                            f'[{self.account_name}] Bike Ride 3D in Hamster FAM key: {promoCode}'
-                        )
-                        time.sleep(2)
-                        log.info(
-                            f'[{self.account_name}] Claiming Bike Ride 3D in Hamster FAM...'
-                        )
-
-                        self.ClaimPlayGroundGame(promoCode)
-                        log.info(
-                            f'[{self.account_name}] Playground game claimed successfully.'
-                        )
+                    log.info(
+                        f"[{self.account_name}] Claiming {promoData['name']}..."
+                    )
+                    self.ClaimPlayGroundGame(promoCode)
+                    log.info(
+                        f"[{self.account_name}] {promoData['name']} claimed successfully."
+                    )
 
     def ClaimPlayGroundGame(self, promoCode):
         url = 'https://api.hamsterkombatgame.io/clicker/apply-promo'
@@ -899,13 +904,11 @@ class HamsterKombatAccount:
         # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200, payload)
 
-    def GetPlayGroundBikeRideKey(self, promoID):
-        appToken = 'd28721be-fd2d-4b45-869e-9f253b554e50'
+    def GetPlayGroundGameKey(self, promoData):
+        appToken = promoData['appToken']
         clientId = f"{int(time.time() * 1000)}-{''.join(str(random.randint(0, 9)) for _ in range(19))}"
 
-        log.info(
-            f'[{self.account_name}] Getting Bike Ride 3D in Hamster FAM key...'
-        )
+        log.info(f"[{self.account_name}] Getting {promoData['name']} key...")
         url = 'https://api.gamepromo.io/promo/login-client'
 
         headers = {
@@ -919,32 +922,38 @@ class HamsterKombatAccount:
             {
                 'appToken': appToken,
                 'clientId': clientId,
-                'clientOrigin': 'deviceid',
+                'clientOrigin': 'ios',
             }
         )
 
         response = self.HttpRequest(url, headers, 'POST', 200, payload)
         if response is None:
             log.error(
-                f'[{self.account_name}] Unable to get Bike Ride 3D in Hamster FAM key.'
+                f"[{self.account_name}] Unable to get {promoData['name']} key."
             )
             self.SendTelegramLog(
-                f'[{self.account_name}] Unable to get Bike Ride 3D in Hamster FAM key.',
+                f"[{self.account_name}] Unable to get {promoData['name']} key.",
                 'other_errors',
             )
             return None
 
         if 'clientToken' not in response:
             log.error(
-                f'[{self.account_name}] Unable to get Bike Ride 3D in Hamster FAM key.'
+                f"[{self.account_name}] Unable to get {promoData['name']} key."
             )
             self.SendTelegramLog(
-                f'[{self.account_name}] Unable to get Bike Ride 3D in Hamster FAM key.',
+                f"[{self.account_name}] Unable to get {promoData['name']} key.",
                 'other_errors',
             )
             return None
 
         clientToken = response['clientToken']
+
+        time.sleep(promoData['delay'] + random.randint(1, 5))
+
+        log.info(
+            f"[{self.account_name}] Registering event for {promoData['name']}..."
+        )
 
         url = 'https://api.gamepromo.io/promo/register-event'
 
@@ -958,12 +967,14 @@ class HamsterKombatAccount:
 
         response = None
 
-        while True:
+        retryCount = 0
+        while retryCount < 5:
+            retryCount += 1
             eventID = str(uuid.uuid4())
 
             payload = json.dumps(
                 {
-                    'promoId': promoID,
+                    'promoId': promoData['promoId'],
                     'eventId': eventID,
                     'eventOrigin': 'undefined',
                 }
@@ -974,14 +985,16 @@ class HamsterKombatAccount:
             )
 
             if response is None or not isinstance(response, dict):
-                time.sleep(5)
+                time.sleep(promoData['delay'] + random.randint(1, 5))
                 continue
 
             if not response.get('hasCode', False):
-                time.sleep(5)
+                time.sleep(promoData['delay'] + random.randint(1, 5))
                 continue
 
             break
+
+        log.info(f'[{self.account_name}] Event registered successfully.')
 
         url = 'https://api.gamepromo.io/promo/create-code'
 
@@ -995,17 +1008,17 @@ class HamsterKombatAccount:
 
         payload = json.dumps(
             {
-                'promoId': promoID,
+                'promoId': promoData['promoId'],
             }
         )
 
         response = self.HttpRequest(url, headers, 'POST', 200, payload)
         if response is None:
             log.error(
-                f'[{self.account_name}] Unable to get Bike Ride 3D in Hamster FAM key.'
+                f"[{self.account_name}] Unable to get {promoData['name']} key."
             )
             self.SendTelegramLog(
-                f'[{self.account_name}] Unable to get Bike Ride 3D in Hamster FAM key.',
+                f"[{self.account_name}] Unable to get {promoData['name']} key.",
                 'other_errors',
             )
             return None
@@ -1016,10 +1029,10 @@ class HamsterKombatAccount:
             or response.get('promoCode') == ''
         ):
             log.error(
-                f'[{self.account_name}] Unable to get Bike Ride 3D in Hamster FAM key.'
+                f"[{self.account_name}] Unable to get {promoData['name']} key."
             )
             self.SendTelegramLog(
-                f'[{self.account_name}] Unable to get Bike Ride 3D in Hamster FAM key.',
+                f"[{self.account_name}] Unable to get {promoData['name']} key."
                 'other_errors',
             )
             return None
@@ -1044,7 +1057,7 @@ class HamsterKombatAccount:
                 and state['receiveKeysToday'] >= promo['keysPerDay']
             ):
                 log.info(
-                    f"[{self.account_name}] Playground game {SupportedPromoGames[promo['promoId']]} already claimed."
+                    f"[{self.account_name}] Playground game {SupportedPromoGames[promo['promoId']]['name']} already claimed."
                 )
                 return False
 
@@ -1095,7 +1108,6 @@ class HamsterKombatAccount:
             )
             return
 
-        self.StartPlaygroundGame()
         DailyCipher = ''
         if (
             self.config['auto_get_daily_cipher']
@@ -1151,7 +1163,6 @@ class HamsterKombatAccount:
                 f'[{self.account_name}] Failed to get tasks list.',
                 'other_errors',
             )
-            return
 
         log.info(f'[{self.account_name}] Getting account airdrop tasks...')
         airdropTasksResponse = self.GetListAirDropTasksRequest()
@@ -1160,11 +1171,6 @@ class HamsterKombatAccount:
             log.error(
                 f'[{self.account_name}] Failed to get airdrop tasks list.'
             )
-            self.SendTelegramLog(
-                f'[{self.account_name}] Failed to get airdrop tasks list.',
-                'other_errors',
-            )
-            return
 
         log.info(f'[{self.account_name}] Getting account IP...')
         ipResponse = self.IPRequest()
@@ -1196,7 +1202,7 @@ class HamsterKombatAccount:
             log.info(f'[{self.account_name}] Tapping completed successfully.')
 
         if self.config['auto_get_daily_cipher'] and DailyCipher != '':
-            if AccountConfigData['dailyCipher']['isClaimed']:
+            if AccountConfigData['dailyCipher']['isClaimed'] == True:
                 log.info(
                     f'\033[1;34m[{self.account_name}] Daily cipher already claimed.\033[0m'
                 )
@@ -1214,7 +1220,12 @@ class HamsterKombatAccount:
                     'daily_cipher',
                 )
 
-        if self.config['auto_get_daily_task']:
+        if (
+            self.config['auto_get_daily_task']
+            and tasksResponse is not None
+            and 'tasks' in tasksResponse
+            and isinstance(tasksResponse['tasks'], list)
+        ):
             log.info(f'[{self.account_name}] Checking for daily task...')
             streak_days = None
             for task in tasksResponse['tasks']:
@@ -1226,7 +1237,7 @@ class HamsterKombatAccount:
                 log.error(f'[{self.account_name}] Failed to get daily task.')
                 return
 
-            if streak_days['isCompleted']:
+            if streak_days['isCompleted'] == True:
                 log.info(
                     f'\033[1;34m[{self.account_name}] Daily task already completed.\033[0m'
                 )
@@ -1246,15 +1257,17 @@ class HamsterKombatAccount:
                     'daily_task',
                 )
 
-        if self.config['auto_get_task']:
+        if (
+            self.config['auto_get_task']
+            and tasksResponse is not None
+            and 'tasks' in tasksResponse
+            and isinstance(tasksResponse['tasks'], list)
+        ):
             log.info(f'[{self.account_name}] Checking for available task...')
             selected_task = None
             for task in tasksResponse['tasks']:
-                if task.get('linksWithLocales'):
-                    link = task.get('linksWithLocales')[0].get('link', '')
-                else:
-                    link = task.get('link', '')
-                if not task['isCompleted'] and ('https://' in link):
+                link = task.get('link', '')
+                if task['isCompleted'] == False and ('https://' in link):
                     log.info(
                         f'[{self.account_name}] Attempting to complete Youtube Or Twitter task...'
                     )
@@ -1296,6 +1309,7 @@ class HamsterKombatAccount:
                 f'[{self.account_name}] Account Balance Coins: {number_to_string(self.balanceCoins)}, Available Taps: {self.availableTaps}, Max Taps: {self.maxTaps}, Total Keys: {self.totalKeys}, Balance Keys: {self.balanceKeys}'
             )
 
+        self.StartPlaygroundGame()
         # Start skins upgrades
         if (
             self.config['auto_get_skin']
@@ -1439,3 +1453,37 @@ class HamsterKombatAccount:
             f'[{self.account_name}] Final account balance: {number_to_string(self.balanceCoins)} coins, Your profit per hour is {number_to_string(self.earnPassivePerHour)} (+{number_to_string(self.ProfitPerHour)}), Spent: {number_to_string(self.SpendTokens)}',
             'account_info',
         )
+
+
+def RunAccounts():
+    accounts = []
+    for account in AccountList:
+        accounts.append(HamsterKombatAccount(account))
+        accounts[-1].SendTelegramLog(
+            f'[{accounts[-1].account_name}] Hamster Kombat Auto farming bot started successfully.',
+            'general_info',
+        )
+
+    while True:
+        log.info('\033[1;33mStarting all accounts...\033[0m')
+        for account in accounts:
+            account.Start()
+
+        if AccountsRecheckTime < 1 and MaxRandomDelay < 1:
+            log.error(
+                f'AccountsRecheckTime and MaxRandomDelay values are set to 0, bot will close now.'
+            )
+            return
+
+        if MaxRandomDelay > 0:
+            randomDelay = random.randint(1, MaxRandomDelay)
+            log.error(
+                f'Sleeping for {randomDelay} seconds because of random delay...'
+            )
+            time.sleep(randomDelay)
+
+        if AccountsRecheckTime > 0:
+            log.error(
+                f'Rechecking all accounts in {AccountsRecheckTime} seconds...'
+            )
+            time.sleep(AccountsRecheckTime)
