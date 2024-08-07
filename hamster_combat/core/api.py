@@ -1313,17 +1313,16 @@ class HamsterKombatAccount:
                     'daily_task',
                 )
 
-        if (
-            self.config['auto_get_task']
-            and tasksResponse is not None
-            and 'tasks' in tasksResponse
-            and isinstance(tasksResponse['tasks'], list)
-        ):
+        if self.config['auto_get_task']:
             log.info(f'[{self.account_name}] Checking for available task...')
             selected_task = None
             for task in tasksResponse['tasks']:
-                link = task.get('link', '')
-                if task['isCompleted'] == False and ('https://' in link):
+                if task.get('linksWithLocales'):
+                    if task.get('linksWithLocales'):
+                        link = task.get('linksWithLocales').get('en', '')
+                    else:
+                        link = task.get('linksWithLocales')
+                if not task['isCompleted'] and ('https://' in link):
                     log.info(
                         f'[{self.account_name}] Attempting to complete Youtube Or Twitter task...'
                     )
