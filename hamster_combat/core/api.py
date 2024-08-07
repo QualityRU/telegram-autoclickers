@@ -58,6 +58,7 @@ class HamsterKombatAccount:
         self.account_name = AccountData['account_name']
         self.Authorization = AccountData['Authorization']
         self.UserAgent = AccountData['UserAgent']
+        self.Config_URL = AccountData['Config_URL']
         self.Proxy = AccountData['Proxy']
         self.config = AccountData['config']
         self.isAndroidDevice = 'Android' in self.UserAgent
@@ -482,6 +483,22 @@ class HamsterKombatAccount:
 
         # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200)
+
+    def GetConfigURLRequest(self, url):
+        headers = {
+            'Access-Control-Request-Headers': '*',
+            'Access-Control-Request-Method': '*',
+        }
+
+        # Send OPTIONS request
+        self.HttpRequest(url, headers, 'OPTIONS', 204)
+
+        headers = {
+            'Authorization': self.Authorization,
+        }
+
+        # Send POST request
+        return self.HttpRequest(url, headers, 'GET', 200)
 
     # Sending get-skin request
     def GetSkinRequest(self):
@@ -1123,12 +1140,21 @@ class HamsterKombatAccount:
         )
 
         log.info(f'[{self.account_name}] Getting account config data...')
-        AccountConfigData = self.GetAccountConfigRequest()
-        if (
-            AccountConfigData is None
-            or AccountConfigData is False
-            or 'clickerConfig' not in AccountConfigData
-        ):
+
+        try:
+            AccountConfigData = self.GetAccountConfigRequest()
+            AccountConfigURLData = self.GetConfigURLRequest(self.Config_URL)
+            AccountConfigData['clickerConfig'] = AccountConfigURLData['config']
+
+            if (
+                AccountConfigData is None
+                or AccountConfigURLData is None
+                or AccountConfigData is False
+                or AccountConfigURLData is False
+                or 'config' not in AccountConfigURLData
+            ):
+                raise ValueError('Unable to get account config data.')
+        except (Exception, ValueError):
             log.error(
                 f'[{self.account_name}] Unable to get account config data.'
             )
@@ -1341,6 +1367,7 @@ class HamsterKombatAccount:
 
         self.StartPlaygroundGame()
         # Start skins upgrades
+        AccountConfigData['clickerConfig']
         if (
             self.config['auto_get_skin']
             and 'skins' in AccountConfigData['clickerConfig']

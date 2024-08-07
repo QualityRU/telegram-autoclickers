@@ -14,6 +14,7 @@ AccountList = [
     {
         'account_name': 'Account 1',  # A custom name for the account (not important, just for logs)
         'Authorization': 'Bearer TOKEN_HERE',  # To get the token, refer to the README.md file
+        'Config_URL': 'https://api.hamsterkombatgame.io/clicker/config/bx2ng1****************',
         'UserAgent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36',  # Refer to the README.md file to obtain a user agent
         'Proxy': {},  # You can use proxies to avoid getting banned. Use {} for no proxy
         # Example of using a proxy:
