@@ -244,22 +244,22 @@ class HamsterKombatAccount:
         # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200, payload)
 
-    # def ClaimDailyComboRequest(self):
-    #     url = 'https://api.hamsterkombatgame.io/clicker/claim-daily-combo'
-    #     headers = {
-    #         'Access-Control-Request-Headers': 'authorization',
-    #         'Access-Control-Request-Method': 'POST',
-    #     }
+    def ClaimDailyComboRequest(self):
+        url = 'https://api.hamsterkombatgame.io/clicker/claim-daily-combo'
+        headers = {
+            'Access-Control-Request-Headers': 'authorization',
+            'Access-Control-Request-Method': 'POST',
+        }
 
-    #     # Send OPTIONS request
-    #     self.HttpRequest(url, headers, 'OPTIONS', 204)
+        # Send OPTIONS request
+        self.HttpRequest(url, headers, 'OPTIONS', 204)
 
-    #     headers = {
-    #         'Authorization': self.Authorization,
-    #     }
+        headers = {
+            'Authorization': self.Authorization,
+        }
 
-    #     # Send POST request
-    #     return self.HttpRequest(url, headers, 'POST', 200)
+        # Send POST request
+        return self.HttpRequest(url, headers, 'POST', 200)
 
     # Tap the hamster
     def TapRequest(self, tap_count):
@@ -643,6 +643,7 @@ class HamsterKombatAccount:
         log.info(f'[{self.account_name}] Checking for best card...')
         time.sleep(2)
         upgradesResponse = self.UpgradesForBuyRequest()
+        
         if upgradesResponse is None:
             log.error(f'[{self.account_name}] Failed to get upgrades list.')
             self.SendTelegramLog(
@@ -650,6 +651,11 @@ class HamsterKombatAccount:
                 'other_errors',
             )
             return False
+
+        if upgradesResponse.get('dailyCombo'):
+            if upgradesResponse.get('dailyCombo').get('isClaimed'):
+                self.ClaimDailyComboRequest()
+                log.info(f'[{self.account_name}] Daily Combo completed successfully.')
 
         upgrades = [
             item
