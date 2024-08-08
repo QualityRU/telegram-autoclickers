@@ -58,7 +58,7 @@ class HamsterKombatAccount:
         self.account_name = AccountData['account_name']
         self.Authorization = AccountData['Authorization']
         self.UserAgent = AccountData['UserAgent']
-        self.Config_URL = AccountData['Config_URL']
+        self.Config_Version = None
         self.Proxy = AccountData['Proxy']
         self.config = AccountData['config']
         self.isAndroidDevice = 'Android' in self.UserAgent
@@ -169,6 +169,8 @@ class HamsterKombatAccount:
             if method == 'OPTIONS':
                 return True
 
+            if response.headers.get('config-version'):
+                self.Config_Version = response.headers.get('config-version')
             return response.json()
         except Exception as e:
             if ignore_errors:
@@ -241,6 +243,23 @@ class HamsterKombatAccount:
 
         # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200, payload)
+
+    # def ClaimDailyComboRequest(self):
+    #     url = 'https://api.hamsterkombatgame.io/clicker/claim-daily-combo'
+    #     headers = {
+    #         'Access-Control-Request-Headers': 'authorization',
+    #         'Access-Control-Request-Method': 'POST',
+    #     }
+
+    #     # Send OPTIONS request
+    #     self.HttpRequest(url, headers, 'OPTIONS', 204)
+
+    #     headers = {
+    #         'Authorization': self.Authorization,
+    #     }
+
+    #     # Send POST request
+    #     return self.HttpRequest(url, headers, 'POST', 200)
 
     # Tap the hamster
     def TapRequest(self, tap_count):
@@ -484,7 +503,10 @@ class HamsterKombatAccount:
         # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200)
 
-    def GetConfigURLRequest(self, url):
+    def GetConfigURLRequest(self, config_version):
+        url = (
+            'https://api.hamsterkombatgame.io/clicker/config/' + config_version
+        )
         headers = {
             'Access-Control-Request-Headers': '*',
             'Access-Control-Request-Method': '*',
@@ -1141,10 +1163,11 @@ class HamsterKombatAccount:
 
         log.info(f'[{self.account_name}] Getting account config data...')
 
-        AccountConfigData = self.GetAccountConfigRequest()
-        AccountConfigURLData = self.GetConfigURLRequest(self.Config_URL)
-
         try:
+            AccountConfigData = self.GetAccountConfigRequest()
+            AccountConfigURLData = self.GetConfigURLRequest(
+                self.Config_Version
+            )
             if (
                 AccountConfigData is None
                 or AccountConfigURLData is None
