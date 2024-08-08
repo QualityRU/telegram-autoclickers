@@ -1165,6 +1165,8 @@ class HamsterKombatAccount:
 
         try:
             AccountConfigData = self.GetAccountConfigRequest()
+            if not self.Config_Version:
+                raise ValueError('No Config-Version to generate a link to get the config.')
             AccountConfigURLData = self.GetConfigURLRequest(
                 self.Config_Version
             )
