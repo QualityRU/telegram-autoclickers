@@ -1357,7 +1357,7 @@ class HamsterKombatAccount:
                 if task.get('linksWithLocales'):
                     link = task.get('linksWithLocales').get('en', '')
                 else:
-                    link = task.get('link')
+                    link = task.get('link', '')
                 if not task['isCompleted'] and ('https://' in link):
                     log.info(
                         f'[{self.account_name}] Attempting to complete Youtube Or Twitter task...'
