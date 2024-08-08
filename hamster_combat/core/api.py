@@ -1141,25 +1141,27 @@ class HamsterKombatAccount:
 
         log.info(f'[{self.account_name}] Getting account config data...')
 
-        try:
-            AccountConfigData = self.GetAccountConfigRequest()
-            AccountConfigURLData = self.GetConfigURLRequest(self.Config_URL)
-            AccountConfigData['clickerConfig'] = AccountConfigURLData['config']
+        AccountConfigData = self.GetAccountConfigRequest()
+        AccountConfigURLData = self.GetConfigURLRequest(self.Config_URL)
 
+        try:
             if (
                 AccountConfigData is None
                 or AccountConfigURLData is None
                 or AccountConfigData is False
                 or AccountConfigURLData is False
+                or 'dailyCipher' not in AccountConfigData
+                or 'dailyKeysMiniGame' not in AccountConfigData
                 or 'config' not in AccountConfigURLData
             ):
-                raise ValueError('Unable to get account config data.')
-        except (Exception, ValueError):
+                raise ValueError('Incomplete config data.')
+            AccountConfigData['clickerConfig'] = AccountConfigURLData['config']
+        except (Exception, ValueError, KeyError) as e:
             log.error(
-                f'[{self.account_name}] Unable to get account config data.'
+                f'[{self.account_name}] Unable to get account config data. {e}'
             )
             self.SendTelegramLog(
-                f'[{self.account_name}] Unable to get account config data.',
+                f'[{self.account_name}] Unable to get account config data. {e}',
                 'other_errors',
             )
             return
