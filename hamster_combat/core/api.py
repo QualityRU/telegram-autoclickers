@@ -643,7 +643,7 @@ class HamsterKombatAccount:
         log.info(f'[{self.account_name}] Checking for best card...')
         time.sleep(2)
         upgradesResponse = self.UpgradesForBuyRequest()
-        
+
         if upgradesResponse is None:
             log.error(f'[{self.account_name}] Failed to get upgrades list.')
             self.SendTelegramLog(
@@ -655,7 +655,9 @@ class HamsterKombatAccount:
         if upgradesResponse.get('dailyCombo'):
             if upgradesResponse.get('dailyCombo').get('isClaimed'):
                 self.ClaimDailyComboRequest()
-                log.info(f'[{self.account_name}] Daily Combo completed successfully.')
+                log.info(
+                    f'[{self.account_name}] Daily Combo completed successfully.'
+                )
 
         upgrades = [
             item
@@ -1172,7 +1174,9 @@ class HamsterKombatAccount:
         try:
             AccountConfigData = self.GetAccountConfigRequest()
             if not self.Config_Version:
-                raise ValueError('No Config-Version to generate a link to get the config.')
+                raise ValueError(
+                    'No Config-Version to generate a link to get the config.'
+                )
             AccountConfigURLData = self.GetConfigURLRequest(
                 self.Config_Version
             )
@@ -1351,10 +1355,9 @@ class HamsterKombatAccount:
             selected_task = None
             for task in tasksResponse['tasks']:
                 if task.get('linksWithLocales'):
-                    if task.get('linksWithLocales'):
-                        link = task.get('linksWithLocales').get('en', '')
-                    else:
-                        link = task.get('linksWithLocales')
+                    link = task.get('linksWithLocales').get('en', '')
+                else:
+                    link = task.get('link')
                 if not task['isCompleted'] and ('https://' in link):
                     log.info(
                         f'[{self.account_name}] Attempting to complete Youtube Or Twitter task...'
