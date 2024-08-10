@@ -1,14 +1,16 @@
 import asyncio
 import random
 import time
+import traceback
 
 from config import AccountList, AccountsRecheckTime, MaxRandomDelay
 from core.api import HamsterKombatAccount
 from core.logger import log
 
+accounts = []
 
-def RunAccounts():
-    accounts = []
+
+def RunAccounts(accounts):
     for account in AccountList:
         accounts.append(HamsterKombatAccount(account))
         accounts[-1].SendTelegramLog(
@@ -61,9 +63,14 @@ def main():
 
     time.sleep(2)
     try:
-        asyncio.run(RunAccounts())
+        asyncio.run(RunAccounts(accounts))
     except KeyboardInterrupt:
         log.error('Stopping Master Hamster Kombat Auto farming bot...')
+    except Exception as e:
+        accounts[0].SendTelegramLog(
+            f'[{accounts[0].account_name}] Main error.\n\n{traceback.format_exc()}',
+            'other_errors',
+        )
 
 
 if __name__ == '__main__':
