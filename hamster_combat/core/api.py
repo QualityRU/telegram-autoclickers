@@ -684,6 +684,21 @@ class HamsterKombatAccount:
         current_selected_card = selected_upgrades[0]
         for selected_card in selected_upgrades:
             if (
+                "cooldownSeconds" in selected_card
+                and selected_card["cooldownSeconds"] > 0
+                and selected_card["cooldownSeconds"] < 180
+            ):
+                log.warning(
+                    f"[{self.account_name}] {selected_card['name']} is on cooldown and cooldown is less than 180 seconds..."
+                )
+                log.warning(
+                    f"[{self.account_name}] Waiting for {selected_card['cooldownSeconds'] + 2} seconds..."
+                )
+
+                time.sleep(selected_card["cooldownSeconds"] + 2)
+                selected_card["cooldownSeconds"] = 0
+
+            if (
                 'cooldownSeconds' in selected_card
                 and selected_card['cooldownSeconds'] > 0
                 and not self.config['enable_parallel_upgrades']
@@ -744,6 +759,7 @@ class HamsterKombatAccount:
             )
 
             return True
+        return False
 
     def StartMiniGame(self, AccountConfigData, AccountID):
         if 'dailyKeysMiniGame' not in AccountConfigData:
@@ -1321,7 +1337,7 @@ class HamsterKombatAccount:
         ):
             log.info(f'[{self.account_name}] Checking for daily task...')
             streak_days = None
-            for task in tasksResponse['tasks']:
+            for task in tasksResponse.get('tasks', []):
                 if task['id'] == 'streak_days':
                     streak_days = task
                     break
@@ -1353,7 +1369,7 @@ class HamsterKombatAccount:
         if self.config['auto_get_task']:
             log.info(f'[{self.account_name}] Checking for available task...')
             selected_task = None
-            for task in tasksResponse['tasks']:
+            for task in tasksResponse.get('tasks', []):
                 if task.get('linksWithLocales'):
                     link = task.get('linksWithLocales').get('en', '')
                 else:
