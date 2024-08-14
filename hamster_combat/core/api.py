@@ -1159,7 +1159,7 @@ class HamsterKombatAccount:
                 f"[{self.account_name}] Unable to get {promoData['name']} key."
             )
             self.SendTelegramLog(
-                f"[{self.account_name}] Unable to get {promoData['name']} key."
+                f"[{self.account_name}] Unable to get {promoData['name']} key.",
                 'other_errors',
             )
             return None
@@ -1403,6 +1403,8 @@ class HamsterKombatAccount:
         if self.config['auto_get_task']:
             log.info(f'[{self.account_name}] Checking for available task...')
             selected_task = None
+            if not tasksResponse:
+                return
             for task in tasksResponse.get('tasks', []):
                 if task.get('linksWithLocales'):
                     link = task.get('linksWithLocales').get('en', '')
