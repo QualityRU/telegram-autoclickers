@@ -442,8 +442,8 @@ class HamsterKombatAccount:
         # Send GET request
         return self.HttpRequest(url, headers, 'GET', 200)
 
-    def MeTelegramRequest(self):
-        url = 'https://api.hamsterkombatgame.io/auth/me-telegram'
+    def AccountInfoTelegramRequest(self):
+        url = 'https://api.hamsterkombatgame.io/auth/account-info'
         headers = {
             'Access-Control-Request-Headers': 'authorization',
             'Access-Control-Request-Method': 'POST',
@@ -953,13 +953,27 @@ class HamsterKombatAccount:
             )
             return
 
+        promo_count = 0
         for promo in response['promos']:
-            if promo[
-                'promoId'
-            ] in SupportedPromoGames and self.CheckPlayGroundGameState(
-                promo, response
-            ):
+            if promo['promoId'] not in SupportedPromoGames:
+                log.warning(
+                    f"[{self.account_name}] Detected unknown playground game: {promo['title']['en']}. Check project github for updates."
+                )
+                continue
+
+            if self.CheckPlayGroundGameState(promo, response):
                 promoData = SupportedPromoGames[promo['promoId']]
+
+                promo_count += 1
+                if self.GetConfig(
+                    'max_promo_games_per_round', 3
+                ) != 0 and promo_count > self.GetConfig(
+                    'max_promo_games_per_round', 3
+                ):
+                    log.info(
+                        f'[{self.account_name}] Maximum number of playground games reached. We will retrieve other games in the next run.'
+                    )
+                    return
                 log.info(
                     f"[{self.account_name}] Starting {promoData['name']} Playground game..."
                 )
@@ -1078,7 +1092,7 @@ class HamsterKombatAccount:
         response = None
 
         retryCount = 0
-        while retryCount < 10:
+        while retryCount < 8:
             retryCount += 1
             eventID = str(uuid.uuid4())
 
@@ -1101,11 +1115,11 @@ class HamsterKombatAccount:
             )
 
             if response is None or not isinstance(response, dict):
-                time.sleep(promoData['delay'] + random.randint(1, 5))
+                time.sleep(promoData['retry_delay'] + random.randint(1, 5))
                 continue
 
             if not response.get('hasCode', False):
-                time.sleep(promoData['delay'] + random.randint(1, 5))
+                time.sleep(promoData['retry_delay'] + random.randint(1, 5))
                 continue
 
             break
@@ -1201,13 +1215,13 @@ class HamsterKombatAccount:
         log.info(f'[{self.account_name}] Starting account...')
 
         log.info(f'[{self.account_name}] Getting basic account data...')
-        AccountBasicData = self.MeTelegramRequest()
+        AccountBasicData = self.AccountInfoTelegramRequest()
 
         if (
             AccountBasicData is None
             or AccountBasicData is False
-            or 'telegramUser' not in AccountBasicData
-            or 'id' not in AccountBasicData['telegramUser']
+            or 'accountInfo' not in AccountBasicData
+            or 'id' not in AccountBasicData['accountInfo']
         ):
             log.error(
                 f'[{self.account_name}] Unable to get account basic data.'
@@ -1219,10 +1233,10 @@ class HamsterKombatAccount:
             return
 
         log.info(
-            f"\033[1;35m[{self.account_name}] Account ID: {AccountBasicData['telegramUser']['id']}, Account detected as bot: {AccountBasicData['telegramUser']['isBot']}\033[0m"
+            f"\033[1;35m[{self.account_name}] Account ID: {AccountBasicData['accountInfo']['id']}, Account Name: {AccountBasicData['accountInfo']['name']}\033[0m"
         )
         self.SendTelegramLog(
-            f"[{self.account_name}] Account ID: {AccountBasicData['telegramUser']['id']}, Account detected as bot: {AccountBasicData['telegramUser']['isBot']}",
+            f"[{self.account_name}] Account ID: {AccountBasicData['accountInfo']['id']}",
             'account_info',
         )
 
@@ -1341,7 +1355,7 @@ class HamsterKombatAccount:
             )
             time.sleep(1)
             self.StartMiniGame(
-                AccountConfigData, AccountBasicData['telegramUser']['id']
+                AccountConfigData, AccountBasicData['accountInfo']['id']
             )
 
         # Start tapping
