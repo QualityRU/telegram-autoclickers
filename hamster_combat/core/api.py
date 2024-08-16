@@ -1081,6 +1081,7 @@ class HamsterKombatAccount:
         )
 
         response = self.HttpRequest(url, headers, 'POST', 200, payload)
+        print(response)
         if response is None:
             log.error(
                 f"[{self.account_name}] Unable to get {promoData['name']} key."
@@ -1122,8 +1123,9 @@ class HamsterKombatAccount:
         response = None
 
         retryCount = 0
-        while retryCount < 8:
+        while retryCount < 20:
             retryCount += 1
+            print(retryCount)
             eventID = str(uuid.uuid4())
 
             headers_option[
@@ -1143,6 +1145,7 @@ class HamsterKombatAccount:
             response = self.HttpRequest(
                 url, headers, 'POST', 200, payload, True
             )
+            print(response)
 
             if response is None or not isinstance(response, dict):
                 time.sleep(promoData['retry_delay'] + random.randint(1, 5))
@@ -1191,6 +1194,7 @@ class HamsterKombatAccount:
         )
 
         response = self.HttpRequest(url, headers, 'POST', 200, payload)
+        print(response)
         if response is None:
             log.error(
                 f"[{self.account_name}] Unable to get {promoData['name']} key."
