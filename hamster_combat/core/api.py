@@ -82,6 +82,29 @@ class HamsterKombatAccount:
         self.availableSkins = {}
         self.level = 0
 
+    def GetConfig(self, key, default=None):
+        if key in self.config:
+            return self.config[key]
+        return default
+
+    def SendTelegramLog(self, message, level='other_errors'):
+        if (
+            not telegramBotLogging['is_active']
+            or self.telegram_chat_id == ''
+            or telegramBotLogging['bot_token'] == ''
+        ):
+            return
+
+        if (
+            level not in telegramBotLogging['messages']
+            or telegramBotLogging['messages'][level] is False
+        ):
+            return
+
+        requests.get(
+            f"https://api.telegram.org/bot{telegramBotLogging['bot_token']}/sendMessage?chat_id={self.telegram_chat_id}&text={message}"
+        )
+
     def SendTelegramLog(self, message, level='other_errors'):
         if (
             not telegramBotLogging['is_active']
