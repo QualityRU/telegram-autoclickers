@@ -1,17 +1,20 @@
 import os
 import subprocess
 import sys
+import threading
 import time
+
+import schedule
 
 REPO_PATH = '.'
 RESTART_DELAY = 2
+CHECK_INTERVAL = 2
 MAIN_FILE = 'main.py'
 
 
 def get_git_status():
     try:
         subprocess.run(['git', 'fetch'], cwd=REPO_PATH, check=True)
-
         result = subprocess.run(
             ['git', 'status', '-uno'],
             cwd=REPO_PATH,
@@ -26,7 +29,6 @@ def get_git_status():
 
 def pull_latest_changes():
     try:
-        # Выполняем git pull для загрузки обновлений
         subprocess.run(['git', 'pull'], cwd=REPO_PATH, check=True)
         return True
     except Exception as e:
@@ -36,19 +38,19 @@ def pull_latest_changes():
 
 def restart_program():
     try:
-        print('Restarting program...')
+        print('Restarting main.py...')
         time.sleep(RESTART_DELAY)
         python = sys.executable
-        os.execl(python, python, MAIN_FILE, *sys.argv[1:])
+        os.execl(python, python, MAIN_FILE)
     except Exception as e:
-        print(f'Error restarting program: {e}')
+        print(f'Error restarting main.py: {e}')
 
 
 def update_check():
     if get_git_status():
         print('New version available. Pulling latest changes...')
         if pull_latest_changes():
-            print('Update downloaded. Restarting program...')
+            print('Update downloaded. Restarting main.py...')
             restart_program()
         else:
             print('Failed to pull latest changes.')
@@ -56,5 +58,14 @@ def update_check():
         print('No updates available.')
 
 
-if __name__ == '__main__':
-    update_check()
+def run_schedule():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
+def start_update_checker():
+    schedule.every(CHECK_INTERVAL).seconds.do(update_check)
+    schedule_thread = threading.Thread(target=run_schedule)
+    schedule_thread.daemon = True
+    schedule_thread.start()
