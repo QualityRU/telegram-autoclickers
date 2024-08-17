@@ -5,6 +5,9 @@ import traceback
 
 from core.api import HamsterKombatAccount
 from core.logger import log
+from updater import update_check
+
+update_check()
 
 try:
     from config import (
