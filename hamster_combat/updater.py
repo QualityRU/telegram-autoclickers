@@ -1,79 +1,60 @@
 import os
+import subprocess
 import sys
 import time
 
-import requests
-
-# Constants
-LOCAL_FILE = 'api.py'
-GITHUB_RAW_URL = 'https://raw.githubusercontent.com/QualityRU/telegram-autoclickers/main/hamster_combat/core/api.py'
-RESTART_DELAY = 2  # Delay in seconds before restarting
+REPO_PATH = '.'
+RESTART_DELAY = 2
+MAIN_FILE = 'main.py'
 
 
-def get_local_file_contents(file_path):
-    with open(file_path, 'r') as file:
-        contents = file.readlines()
-    # Exclude the update logic section
-    start_marker = '# BEGIN_UPDATE_LOGIC'
-    end_marker = '# END_UPDATE_LOGIC'
-    in_update_section = False
-    filtered_contents = []
-    for line in contents:
-        if start_marker in line:
-            in_update_section = True
-        if not in_update_section:
-            filtered_contents.append(line)
-        if end_marker in line:
-            in_update_section = False
-    return ''.join(filtered_contents)
-
-
-def get_github_file_contents(url):
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.text
-    else:
-        response.raise_for_status()
-
-
-def check_for_updates():
+def get_git_status():
     try:
-        local_contents = get_local_file_contents(LOCAL_FILE)
-        github_contents = get_github_file_contents(GITHUB_RAW_URL)
-        return local_contents != github_contents
+        subprocess.run(['git', 'fetch'], cwd=REPO_PATH, check=True)
+
+        result = subprocess.run(
+            ['git', 'status', '-uno'],
+            cwd=REPO_PATH,
+            capture_output=True,
+            text=True,
+        )
+        return 'behind' in result.stdout
     except Exception as e:
-        print(f'Error checking for updates: {e}')
+        print(f'Error checking Git status: {e}')
         return False
 
 
-def download_update():
+def pull_latest_changes():
     try:
-        github_contents = get_github_file_contents(GITHUB_RAW_URL)
-        with open(LOCAL_FILE, 'w') as file:
-            file.write(github_contents)
+        # Выполняем git pull для загрузки обновлений
+        subprocess.run(['git', 'pull'], cwd=REPO_PATH, check=True)
         return True
     except Exception as e:
-        print(f'Error downloading update: {e}')
+        print(f'Error pulling latest changes: {e}')
         return False
 
 
 def restart_program():
     try:
         print('Restarting program...')
-        time.sleep(RESTART_DELAY)  # Optional delay before restarting
+        time.sleep(RESTART_DELAY)
         python = sys.executable
-        os.execl(python, python, *sys.argv)
+        os.execl(python, python, MAIN_FILE, *sys.argv[1:])
     except Exception as e:
         print(f'Error restarting program: {e}')
 
 
 def update_check():
-    if check_for_updates():
-        print('New version available. Downloading update...')
-        if download_update():
+    if get_git_status():
+        print('New version available. Pulling latest changes...')
+        if pull_latest_changes():
             print('Update downloaded. Restarting program...')
             restart_program()
         else:
-            print('Failed to download update.')
+            print('Failed to pull latest changes.')
     else:
         print('No updates available.')
+
+
+if __name__ == '__main__':
+    update_check()
