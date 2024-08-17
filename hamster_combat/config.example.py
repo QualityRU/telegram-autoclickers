@@ -83,3 +83,5 @@ telegramBotLogging = {
         'upgrades': False,  # Upgrades
     },
 }
+
+ConfigFileVersion = 1

@@ -58,6 +58,12 @@ class HamsterKombatAccount:
         ):
             return
 
+        if (
+            level not in telegramBotLogging['messages']
+            or telegramBotLogging['messages'][level] is False
+        ):
+            return
+
         try:
             requests.get(
                 f"https://api.telegram.org/bot{telegramBotLogging['bot_token']}/sendMessage?chat_id={self.telegram_chat_id}&text={message}"

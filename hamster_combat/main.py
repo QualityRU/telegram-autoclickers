@@ -3,9 +3,28 @@ import random
 import time
 import traceback
 
-from config import AccountList, AccountsRecheckTime, MaxRandomDelay
 from core.api import HamsterKombatAccount
 from core.logger import log
+
+try:
+    from config import (
+        AccountList,
+        AccountsRecheckTime,
+        ConfigFileVersion,
+        MaxRandomDelay,
+    )
+except ImportError:
+    print('Config file not found.')
+    print('Create a copy of config.py.example and rename it to config.py')
+    print('And fill in the required fields.')
+    exit()
+
+if 'ConfigFileVersion' not in locals() or ConfigFileVersion != 1:
+    print('Invalid config file version.')
+    print('Please update the config file to the latest version.')
+    print('Create a copy of config.py.example and rename it to config.py')
+    print('And fill in the required fields.')
+    exit()
 
 accounts = []
 
