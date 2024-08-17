@@ -5,8 +5,8 @@ import time
 import requests
 
 # Constants
-LOCAL_FILE = 'main.py'
-GITHUB_RAW_URL = 'https://raw.githubusercontent.com/QualityRU/telegram-autoclickers/main/hamster_combat/main.py'
+LOCAL_FILE = 'api.py'
+GITHUB_RAW_URL = 'https://raw.githubusercontent.com/QualityRU/telegram-autoclickers/main/hamster_combat/core/api.py'
 RESTART_DELAY = 2  # Delay in seconds before restarting
 
 
