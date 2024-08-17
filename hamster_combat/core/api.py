@@ -13,7 +13,7 @@ from config import (
     telegramBotLogging,
 )
 from core.logger import log
-from core.promogames import *
+from core.promogames import SupportedPromoGames
 from core.utilities import (
     CalculateCardProfitCoefficient,
     DailyCipherDecode,
