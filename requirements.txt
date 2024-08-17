@@ -21,6 +21,7 @@ platformdirs==4.2.2
 pycodestyle==2.8.0
 pyflakes==2.4.0
 requests==2.32.3
+schedule==1.2.2
 tomli==2.0.1
 urllib3==2.2.2
 yarl==1.9.4

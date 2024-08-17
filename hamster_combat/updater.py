@@ -54,8 +54,6 @@ def update_check():
             restart_program()
         else:
             print('Failed to pull latest changes.')
-    else:
-        print('No updates available.')
 
 
 def run_schedule():
