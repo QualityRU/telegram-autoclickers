@@ -888,9 +888,7 @@ class HamsterKombatAccount:
             log.info(f'[{self.account_name}] Playground games are disabled.')
             return
 
-        log.info(
-            f'[{self.account_name}] Starting gettting playground games...'
-        )
+        log.info(f'[{self.account_name}] Starting getting playground games...')
 
         url = 'https://api.hamsterkombatgame.io/clicker/get-promos'
         headers = {
@@ -926,6 +924,7 @@ class HamsterKombatAccount:
 
         promo_count = 0
         for promo in response['promos']:
+
             if promo['promoId'] not in SupportedPromoGames:
                 log.warning(
                     f"[{self.account_name}] Detected unknown playground game: {promo['title']['en']}. Check project github for updates."
@@ -945,6 +944,7 @@ class HamsterKombatAccount:
                         f'[{self.account_name}] Maximum number of playground games reached. We will retrieve other games in the next run.'
                     )
                     return
+
                 log.info(
                     f"[{self.account_name}] Starting {promoData['name']} Playground game..."
                 )
@@ -992,6 +992,15 @@ class HamsterKombatAccount:
     def GetPlayGroundGameKey(self, promoData):
         appToken = promoData['appToken']
         clientId = f"{int(time.time() * 1000)}-{''.join(str(random.randint(0, 9)) for _ in range(19))}"
+        if (
+            'clientIdType' in promoData
+            and promoData['clientIdType'] == '32str'
+        ):
+            clientId = ''.join(
+                random.choices('abcdefghijklmnopqrstuvwxyz0123456789', k=32)
+            )
+        if 'clientIdType' in promoData and promoData['clientIdType'] == 'uuid':
+            clientId = str(uuid.uuid4())
 
         log.info(f"[{self.account_name}] Getting {promoData['name']} key...")
         url = 'https://api.gamepromo.io/promo/login-client'
@@ -1004,24 +1013,31 @@ class HamsterKombatAccount:
             'access-control-request-method': 'POST',
         }
 
-        self.HttpRequest(url, headers_option, 'OPTIONS', 204, True)
-
-        headers = {
-            'Content-Type': 'application/json; charset=utf-8',
+        headers_post = {
             'Host': 'api.gamepromo.io',
             'Origin': '',
             'Referer': '',
+            'Content-Type': 'application/json; charset=utf-8',
         }
 
-        payload = json.dumps(
-            {
-                'appToken': appToken,
-                'clientId': clientId,
-                'clientOrigin': 'ios',
-            }
-        )
+        if 'userAgent' in promoData and promoData['userAgent'] != None:
+            headers_post['User-Agent'] = promoData['userAgent']
+            headers_option['User-Agent'] = promoData['userAgent']
 
-        response = self.HttpRequest(url, headers, 'POST', 200, payload)
+        self.HttpRequest(url, headers_option, 'OPTIONS', 204, True)
+
+        payloadData = {
+            'appToken': appToken,
+            'clientId': clientId,
+            'clientOrigin': promoData['clientOrigin'],
+        }
+
+        if 'clientVersion' in promoData and promoData['clientVersion'] != None:
+            payloadData['clientVersion'] = promoData['clientVersion']
+
+        payload = json.dumps(payloadData)
+
+        response = self.HttpRequest(url, headers_post, 'POST', 200, payload)
         if response is None:
             log.error(
                 f"[{self.account_name}] Unable to get {promoData['name']} key."
@@ -1052,20 +1068,20 @@ class HamsterKombatAccount:
 
         url = 'https://api.gamepromo.io/promo/register-event'
 
-        headers = {
-            'Authorization': f'Bearer {clientToken}',
-            'Host': 'api.gamepromo.io',
-            'Content-Type': 'application/json; charset=utf-8',
-            'Origin': '',
-            'Referer': '',
-        }
+        headers_post['Authorization'] = f'Bearer {clientToken}'
 
         response = None
 
         retryCount = 0
-        while retryCount < 12:
+        while retryCount < 15:
             retryCount += 1
             eventID = str(uuid.uuid4())
+
+            if 'eventIdType' in promoData:
+                if promoData['eventIdType'] == 'uuid':
+                    eventID = str(uuid.uuid4())
+                else:
+                    eventID = promoData['eventIdType']
 
             headers_option[
                 'access-control-request-headers'
@@ -1076,7 +1092,7 @@ class HamsterKombatAccount:
             PayloadData = {
                 'promoId': promoData['promoId'],
                 'eventId': eventID,
-                'eventOrigin': 'undefined',
+                'eventOrigin': promoData['eventOrigin'],
             }
 
             if 'eventType' in promoData and promoData['eventType'] != None:
@@ -1085,7 +1101,7 @@ class HamsterKombatAccount:
             payload = json.dumps(PayloadData)
 
             response = self.HttpRequest(
-                url, headers, 'POST', 200, payload, True
+                url, headers_post, 'POST', 200, payload, True
             )
 
             if response is None or not isinstance(response, dict):
@@ -1114,14 +1130,6 @@ class HamsterKombatAccount:
 
         url = 'https://api.gamepromo.io/promo/create-code'
 
-        headers = {
-            'Authorization': f'Bearer {clientToken}',
-            'Content-Type': 'application/json; charset=utf-8',
-            'Host': 'api.gamepromo.io',
-            'Origin': '',
-            'Referer': '',
-        }
-
         headers_option[
             'access-control-request-headers'
         ] = 'authorization,content-type'
@@ -1134,7 +1142,7 @@ class HamsterKombatAccount:
             }
         )
 
-        response = self.HttpRequest(url, headers, 'POST', 200, payload)
+        response = self.HttpRequest(url, headers_post, 'POST', 200, payload)
         if response is None:
             log.error(
                 f"[{self.account_name}] Unable to get {promoData['name']} key."
@@ -1165,9 +1173,6 @@ class HamsterKombatAccount:
     def CheckPlayGroundGameState(self, promo, promos):
         if not self.config['auto_playground_games']:
             log.info(f'[{self.account_name}] Playground games are disabled.')
-            return False
-
-        if promo['promoId'] not in SupportedPromoGames:
             return False
 
         if 'states' not in promos:
