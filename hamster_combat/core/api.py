@@ -1082,7 +1082,7 @@ class HamsterKombatAccount:
         response = None
 
         retryCount = 0
-        while retryCount < 15:
+        while retryCount < 25:
             retryCount += 1
             eventID = str(uuid.uuid4())
 
