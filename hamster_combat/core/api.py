@@ -923,7 +923,7 @@ class HamsterKombatAccount:
             return
 
         promo_count = 0
-        shuffled_promos = response["promos"][:]
+        shuffled_promos = response['promos'][:]
         random.shuffle(shuffled_promos)
         for promo in shuffled_promos:
 
