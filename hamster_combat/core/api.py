@@ -166,15 +166,10 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': self.Authorization,
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Authorization': self.Authorization,
         }
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200)
 
     # Get list of upgrades to buy
@@ -184,15 +179,10 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Authorization': self.Authorization,
         }
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200)
 
     # Buy an upgrade
@@ -202,41 +192,31 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization,content-type',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Authorization': self.Authorization,
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         }
-
         payload = json.dumps(
             {
                 'upgradeId': UpgradeId,
                 'timestamp': int(datetime.datetime.now().timestamp() * 1000),
             }
         )
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200, payload)
 
+    # Claim daily combo
     def ClaimDailyComboRequest(self):
         url = 'https://api.hamsterkombatgame.io/clicker/claim-daily-combo'
         headers = {
             'Access-Control-Request-Headers': 'authorization',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Authorization': self.Authorization,
         }
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200)
 
     # Tap the hamster
@@ -246,16 +226,12 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization,content-type',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Accept': 'application/json',
             'Authorization': self.Authorization,
             'Content-Type': 'application/json',
         }
-
         payload = json.dumps(
             {
                 'timestamp': int(datetime.datetime.now().timestamp() * 1000),
@@ -263,8 +239,6 @@ class HamsterKombatAccount:
                 'count': int(tap_count),
             }
         )
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200, payload)
 
     # Get list of boosts to buy
@@ -274,15 +248,10 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Authorization': self.Authorization,
         }
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200)
 
     # Buy a boost
@@ -292,26 +261,21 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization,content-type',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Accept': 'application/json',
             'Authorization': self.Authorization,
             'Content-Type': 'application/json',
         }
-
         payload = json.dumps(
             {
                 'boostId': boost_id,
                 'timestamp': int(datetime.datetime.now().timestamp() * 1000),
             }
         )
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200, payload)
 
+    # Get cccount data
     def getAccountData(self):
         account_data = self.syncRequest()
         if account_data is None or account_data is False:
@@ -321,7 +285,6 @@ class HamsterKombatAccount:
                 'other_errors',
             )
             return False
-
         if 'clickerUser' not in account_data:
             log.error(f'[{self.account_name}] Invalid account data.')
             self.SendTelegramLog(
@@ -402,15 +365,10 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization',
             'Access-Control-Request-Method': 'GET',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 200)
-
         headers = {
             'Authorization': self.Authorization,
         }
-
-        # Send GET request
         return self.HttpRequest(url, headers, 'GET', 200)
 
     def AccountInfoTelegramRequest(self):
@@ -419,15 +377,10 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Authorization': self.Authorization,
         }
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200)
 
     def ListTasksRequest(self):
@@ -436,15 +389,10 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Authorization': self.Authorization,
         }
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200)
 
     def GetListAirDropTasksRequest(self):
@@ -453,15 +401,10 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Authorization': self.Authorization,
         }
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200)
 
     def GetAccountConfigRequest(self):
@@ -470,15 +413,10 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Authorization': self.Authorization,
         }
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200)
 
     def GetConfigURLRequest(self, config_version):
@@ -489,15 +427,10 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': '*',
             'Access-Control-Request-Method': '*',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Authorization': self.Authorization,
         }
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'GET', 200)
 
     # Sending get-skin request
@@ -507,17 +440,12 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': self.Authorization,
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Accept': 'application/json',
             'Authorization': self.Authorization,
             'Content-Type': 'application/json',
         }
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200)
 
     # Sending buy-skin request
@@ -527,10 +455,7 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': self.Authorization,
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Accept': 'application/json',
             'Authorization': self.Authorization,
@@ -543,8 +468,6 @@ class HamsterKombatAccount:
                 'timestamp': int(datetime.datetime.now().timestamp() * 1000),
             }
         )
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200, payload)
 
     def ClaimDailyCipherRequest(self, DailyCipher):
@@ -553,23 +476,17 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization,content-type',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Accept': 'application/json',
             'Authorization': self.Authorization,
             'Content-Type': 'application/json',
         }
-
         payload = json.dumps(
             {
                 'cipher': DailyCipher,
             }
         )
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200, payload)
 
     def CheckTaskRequest(self, task_id):
@@ -578,10 +495,7 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization,content-type',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Accept': 'application/json',
             'Authorization': self.Authorization,
@@ -593,8 +507,6 @@ class HamsterKombatAccount:
                 'taskId': task_id,
             }
         )
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200, payload)
 
     def BuyCard(self, card):
@@ -774,15 +686,11 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
 
         headers = {
             'Authorization': self.Authorization,
         }
-
-        # Send POST request
         response = self.HttpRequest(url, headers, 'POST', 200)
 
         if response is None:
@@ -844,7 +752,6 @@ class HamsterKombatAccount:
             'Access-Control-Request-Method': 'POST',
         }
 
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
 
         headers = {
@@ -869,8 +776,6 @@ class HamsterKombatAccount:
                 'cipher': cipher_base64,
             }
         )
-
-        # Send POST request
         response = self.HttpRequest(url, headers, 'POST', 200, payload)
 
         if response is None:
@@ -895,15 +800,11 @@ class HamsterKombatAccount:
             'Access-Control-Request-Headers': 'authorization',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
 
         headers = {
             'Authorization': self.Authorization,
         }
-
-        # Send POST request
         response = self.HttpRequest(url, headers, 'POST', 200)
 
         if response is None:
@@ -930,6 +831,10 @@ class HamsterKombatAccount:
             if promo['promoId'] not in SupportedPromoGames:
                 log.warning(
                     f"[{self.account_name}] Detected unknown playground game: {promo['title']['en']}. Check project github for updates."
+                )
+                self.SendTelegramLog(
+                    f"[{self.account_name}] Detected unknown playground game: {promo['title']['en']}. Check project github for updates.",
+                    'other_errors',
                 )
                 continue
 
@@ -967,28 +872,21 @@ class HamsterKombatAccount:
 
     def ClaimPlayGroundGame(self, promoCode):
         url = 'https://api.hamsterkombatgame.io/clicker/apply-promo'
-
         headers = {
             'Access-Control-Request-Headers': 'authorization,content-type',
             'Access-Control-Request-Method': 'POST',
         }
-
-        # Send OPTIONS request
         self.HttpRequest(url, headers, 'OPTIONS', 204)
-
         headers = {
             'Accept': 'application/json',
             'Authorization': self.Authorization,
             'Content-Type': 'application/json',
         }
-
         payload = json.dumps(
             {
                 'promoCode': promoCode,
             }
         )
-
-        # Send POST request
         return self.HttpRequest(url, headers, 'POST', 200, payload)
 
     def GetPlayGroundGameKey(self, promoData):
@@ -1006,7 +904,6 @@ class HamsterKombatAccount:
 
         log.info(f"[{self.account_name}] Getting {promoData['name']} key...")
         url = 'https://api.gamepromo.io/promo/login-client'
-
         headers_option = {
             'Host': 'api.gamepromo.io',
             'Origin': '',
@@ -1014,7 +911,6 @@ class HamsterKombatAccount:
             'access-control-request-headers': 'content-type',
             'access-control-request-method': 'POST',
         }
-
         headers_post = {
             'Host': 'api.gamepromo.io',
             'Origin': '',
@@ -1034,7 +930,6 @@ class HamsterKombatAccount:
             headers_option['X-Unity-Version'] = promoData['x-unity-version']
 
         self.HttpRequest(url, headers_option, 'OPTIONS', 204, True)
-
         payloadData = {
             'appToken': appToken,
             'clientId': clientId,
@@ -1078,9 +973,7 @@ class HamsterKombatAccount:
         )
 
         url = 'https://api.gamepromo.io/promo/register-event'
-
         headers_post['Authorization'] = f'Bearer {clientToken}'
-
         response = None
 
         retryCount = 0
@@ -1152,13 +1045,10 @@ class HamsterKombatAccount:
             log.info(f'[{self.account_name}] Event registered successfully.')
 
         url = 'https://api.gamepromo.io/promo/create-code'
-
         headers_option[
             'access-control-request-headers'
         ] = 'authorization,content-type'
-
         self.HttpRequest(url, headers_option, 'OPTIONS', 204, True)
-
         payload = json.dumps(
             {
                 'promoId': promoData['promoId'],
@@ -1476,6 +1366,7 @@ class HamsterKombatAccount:
             )
 
         self.StartPlaygroundGame()
+
         # Start skins upgrades
         AccountConfigData['clickerConfig']
         if (
