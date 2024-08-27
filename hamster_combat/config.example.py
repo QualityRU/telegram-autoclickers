@@ -14,6 +14,7 @@ AccountList = [
     {
         'account_name': 'Account 1',  # A custom name for the account (not important, just for logs)
         'Authorization': 'Bearer TOKEN_HERE',  # To get the token, refer to the README.md file
+        'TilesCipher': 'TilesCipher',
         'UserAgent': 'Mozilla/5.0 (Linux; Android 14; K) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/128.0.6613.25 Mobile Safari/537.36',  # Refer to the README.md file to obtain a user agent
         'Proxy': {},  # You can use proxies to avoid getting banned. Use {} for no proxy
         # Example of using a proxy:
