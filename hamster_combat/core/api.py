@@ -27,7 +27,6 @@ class HamsterKombatAccount:
     def __init__(self, AccountData):
         self.account_name = AccountData['account_name']
         self.Authorization = AccountData['Authorization']
-        self.TilesCipher = AccountData['TilesCipher']
         self.UserAgent = AccountData['UserAgent']
         self.Config_Version = None
         self.Proxy = AccountData['Proxy']
@@ -797,7 +796,9 @@ class HamsterKombatAccount:
                 cipher_base64 = base64.b64encode(cipher.encode()).decode()
 
             if MiniGame == 'Tiles':
-                cipher_base64 = self.TilesCipher
+                original_cipher = f"0180064280|{self.telegram_chat_id}|Tiles|345128|RjUsVxiH+vlyLbJw9NlT6jKOeMYA+IV1oeRPXGxbKd8="
+                cipher_base64 = base64.b64encode(original_cipher.encode()).decode()
+                print(cipher_base64)
                 continue
                 # STOP
 
