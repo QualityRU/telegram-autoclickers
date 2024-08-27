@@ -652,7 +652,7 @@ class HamsterKombatAccount:
         return False
 
     def StartMiniGame(self, AccountConfigData, AccountID):
-        if 'dailyKeysMiniGame' not in AccountConfigData:
+        if 'dailyKeysMiniGames' not in AccountConfigData:
             log.error(
                 f'[{self.account_name}] Unable to get daily keys mini game.'
             )
@@ -662,14 +662,14 @@ class HamsterKombatAccount:
             )
             return
 
-        if AccountConfigData['dailyKeysMiniGame']['isClaimed'] == True:
+        if AccountConfigData['dailyKeysMiniGames']['Candles']['isClaimed'] == True:
             log.info(
                 f'\033[1;34m[{self.account_name}] Daily keys mini game already claimed.\033[0m'
             )
             return
 
         if (
-            AccountConfigData['dailyKeysMiniGame'][
+            AccountConfigData['dailyKeysMiniGames']['Candles'][
                 'remainSecondsToNextAttempt'
             ]
             > 0
@@ -701,7 +701,7 @@ class HamsterKombatAccount:
             )
             return
 
-        if 'dailyKeysMiniGame' not in response:
+        if 'dailyKeysMiniGames' not in response:
             log.error(
                 f'[{self.account_name}] Unable to get daily keys mini game.'
             )
@@ -711,13 +711,13 @@ class HamsterKombatAccount:
             )
             return
 
-        if response['dailyKeysMiniGame']['isClaimed'] == True:
+        if response['dailyKeysMiniGames']['Candles']['isClaimed'] == True:
             log.info(
                 f'\033[1;34m[{self.account_name}] Daily keys mini game already claimed.\033[0m'
             )
             return
 
-        if 'remainSecondsToGuess' not in response['dailyKeysMiniGame']:
+        if 'remainSecondsToGuess' not in response['dailyKeysMiniGames']['Candles']:
             log.error(
                 f'[{self.account_name}] Unable to get daily keys mini game.'
             )
@@ -728,7 +728,7 @@ class HamsterKombatAccount:
             return
 
         waitTime = int(
-            response['dailyKeysMiniGame']['remainSecondsToGuess']
+            response['dailyKeysMiniGames']['Candles']['remainSecondsToGuess']
             - random.randint(8, 15)
         )
 
@@ -1143,13 +1143,14 @@ class HamsterKombatAccount:
             AccountConfigURLData = self.GetConfigURLRequest(
                 self.Config_Version
             )
+
             if (
                 AccountConfigData is None
                 or AccountConfigURLData is None
                 or AccountConfigData is False
                 or AccountConfigURLData is False
                 or 'dailyCipher' not in AccountConfigData
-                or 'dailyKeysMiniGame' not in AccountConfigData
+                or 'dailyKeysMiniGames' not in AccountConfigData
                 or 'config' not in AccountConfigURLData
             ):
                 raise ValueError('Incomplete config data.')
