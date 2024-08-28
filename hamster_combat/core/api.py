@@ -783,28 +783,38 @@ class HamsterKombatAccount:
                 'Content-Type': 'application/json',
             }
 
-            if MiniGame == 'Candles':
-                cipher = (
-                    (
-                        '0'
-                        + str(waitTime)
-                        + str(random.randint(10000000000, 99999999999))
-                    )[:10]
-                    + '|'
-                    + str(AccountID)
-                )
-                cipher_base64 = base64.b64encode(cipher.encode()).decode()
-
-            if MiniGame == 'Tiles':
-                original_cipher = f"0180064280|{self.telegram_chat_id}|Tiles|345128|RjUsVxiH+vlyLbJw9NlT6jKOeMYA+IV1oeRPXGxbKd8="
-                cipher_base64 = base64.b64encode(original_cipher.encode()).decode()
-                print(cipher_base64)
-                continue
-                # STOP
+            # cipher = (
+            #     (
+            #         '0'
+            #         + str(waitTime)
+            #         + str(random.randint(10000000000, 99999999999))
+            #     )[:10]
+            #     + '|'
+            #     + str(AccountID)
+            # )
+            cipher = (
+                (
+                    '0'
+                    + str(waitTime)
+                    + str(random.randint(10000000000, 99999999999))
+                )[:10]
+                + '|'
+                + str(AccountID)
+                + MiniGame
+                + '|'
+                + '3449577600'
+                + '|'
+                + '056JnTlS3zRIEbrfYATG68MzRR3jI32leGlbVueMV8E='
+            )
+            print(cipher)
+            # cipher = f'0180064280|{AccountID}|{MiniGame}|3449577600|056JnTlS3zRIEbrfYATG68MzRR3jI32leGlbVueMV8E='
+            cipher_base64 = base64.b64encode(cipher.encode()).decode()
+            continue
+            # STOP
 
             payload = json.dumps(
                 {'cipher': cipher_base64, 'miniGameId': MiniGame}
-            )
+                )
             response = self.HttpRequest(url, headers, 'POST', 200, payload)
 
             if response is None:
