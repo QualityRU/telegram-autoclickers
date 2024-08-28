@@ -814,7 +814,7 @@ class HamsterKombatAccount:
 
             payload = json.dumps(
                 {'cipher': cipher_base64, 'miniGameId': MiniGame}
-                )
+            )
             response = self.HttpRequest(url, headers, 'POST', 200, payload)
 
             if response is None:
@@ -937,6 +937,13 @@ class HamsterKombatAccount:
         clientId = f"{int(time.time() * 1000)}-{''.join(str(random.randint(0, 9)) for _ in range(19))}"
         if (
             'clientIdType' in promoData
+            and promoData['clientIdType'] == '16str'
+        ):
+            clientId = ''.join(
+                random.choices('abcdefghijklmnopqrstuvwxyz0123456789', k=16)
+            )
+        if (
+            'clientIdType' in promoData
             and promoData['clientIdType'] == '32str'
         ):
             clientId = ''.join(
@@ -947,6 +954,7 @@ class HamsterKombatAccount:
 
         log.info(f"[{self.account_name}] Getting {promoData['name']} key...")
         url = 'https://api.gamepromo.io/promo/login-client'
+
         headers_option = {
             'Host': 'api.gamepromo.io',
             'Origin': '',
@@ -954,6 +962,7 @@ class HamsterKombatAccount:
             'access-control-request-headers': 'content-type',
             'access-control-request-method': 'POST',
         }
+
         headers_post = {
             'Host': 'api.gamepromo.io',
             'Origin': '',
@@ -973,6 +982,7 @@ class HamsterKombatAccount:
             headers_option['X-Unity-Version'] = promoData['x-unity-version']
 
         self.HttpRequest(url, headers_option, 'OPTIONS', 204, True)
+
         payloadData = {
             'appToken': appToken,
             'clientId': clientId,
@@ -1016,7 +1026,9 @@ class HamsterKombatAccount:
         )
 
         url = 'https://api.gamepromo.io/promo/register-event'
+
         headers_post['Authorization'] = f'Bearer {clientToken}'
+
         response = None
 
         retryCount = 0
@@ -1027,6 +1039,10 @@ class HamsterKombatAccount:
             if 'eventIdType' in promoData:
                 if promoData['eventIdType'] == 'uuid':
                     eventID = str(uuid.uuid4())
+                elif promoData['eventIdType'] == 'timestamp':
+                    eventID = str(
+                        int(datetime.datetime.now().timestamp() * 1000)
+                    )
                 else:
                     eventID = promoData['eventIdType']
 
@@ -1072,7 +1088,6 @@ class HamsterKombatAccount:
                 'other_errors',
             )
             return None
-
         elif (
             response and 'hasCode' in response and not response.get('hasCode')
         ):
@@ -1088,10 +1103,13 @@ class HamsterKombatAccount:
             log.info(f'[{self.account_name}] Event registered successfully.')
 
         url = 'https://api.gamepromo.io/promo/create-code'
+
         headers_option[
             'access-control-request-headers'
         ] = 'authorization,content-type'
+
         self.HttpRequest(url, headers_option, 'OPTIONS', 204, True)
+
         payload = json.dumps(
             {
                 'promoId': promoData['promoId'],
