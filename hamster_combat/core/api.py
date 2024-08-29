@@ -749,6 +749,19 @@ class HamsterKombatAccount:
                 'other_errors',
             )
             return
+
+        response = self.GetPromos()
+
+        if response is None:
+            log.error(
+                f'[{self.account_name}] Unable to get promo games befor starting minigames.'
+            )
+            self.SendTelegramLog(
+                f'[{self.account_name}] Unable to get promo games befor starting minigames.',
+                'other_errors',
+            )
+            return
+
         minigames = list(AccountConfigData['dailyKeysMiniGames'].values())
         random.shuffle(minigames)
         for game in minigames:
@@ -844,7 +857,7 @@ class HamsterKombatAccount:
                     - random.randint(8, 15)
                 )
             elif game['id'] == 'Tiles':
-                waitTime = random.randint(20, 60)
+                waitTime = random.randint(35, 120)
 
             if waitTime < 0:
                 log.error(
@@ -880,6 +893,11 @@ class HamsterKombatAccount:
             responseGameData = response['dailyKeysMiniGames']
             startDate = responseGameData['startDate']
             remainPoints = responseGameData['remainPoints']
+            maxMultiplier = (
+                # min(self.GetConfig('mg_max_tiles_points_percent', 20), 100)
+                max(self.GetConfig('mg_max_tiles_points_percent', 20), 100)
+                / 100
+            )
             number = int(
                 datetime.datetime.fromisoformat(
                     startDate.replace('Z', '+00:00')
@@ -892,11 +910,12 @@ class HamsterKombatAccount:
                 'Candles': 0,
                 'Tiles': (
                     random.randint(
-                        int(int(remainPoints) * 0.1),
-                        int(remainPoints) + 182_640_000,
+                        int(remainPoints * 0.1),
+                        # int(remainPoints * maxMultiplier),
+                        int(remainPoints) + maxMultiplier,
                     )
-                    if int(remainPoints) > 300
-                    else int(remainPoints)
+                    if remainPoints > 300
+                    else remainPoints
                 ),
             }
 
@@ -951,13 +970,7 @@ class HamsterKombatAccount:
 
         log.info(f'[{self.account_name}] Mini game phase completed.')
 
-    def StartPlaygroundGame(self):
-        if not self.config['auto_playground_games']:
-            log.info(f'[{self.account_name}] Playground games are disabled.')
-            return
-
-        log.info(f'[{self.account_name}] Starting getting playground games...')
-
+    def GetPromos(self):
         url = 'https://api.hamsterkombatgame.io/clicker/get-promos'
         headers = {
             'Access-Control-Request-Headers': 'authorization',
@@ -973,6 +986,16 @@ class HamsterKombatAccount:
 
         # Send POST request
         response = self.HttpRequest(url, headers, 'POST', 200)
+        return response
+
+    def StartPlaygroundGame(self):
+        if not self.config['auto_playground_games']:
+            log.info(f'[{self.account_name}] Playground games are disabled.')
+            return
+
+        log.info(f'[{self.account_name}] Starting getting playground games...')
+
+        response = self.GetPromos()
 
         if response is None:
             log.error(f'[{self.account_name}] Unable to get playground games.')
@@ -1294,6 +1317,19 @@ class HamsterKombatAccount:
     def Start(self):
         log.info(f'[{self.account_name}] Starting account...')
 
+        log.info(f'[{self.account_name}] Getting account IP...')
+        ipResponse = self.IPRequest()
+        if ipResponse is None:
+            log.error(f'[{self.account_name}] Failed to get IP.')
+            self.SendTelegramLog(
+                f'[{self.account_name}] Failed to get IP.', 'other_errors'
+            )
+            return
+
+        log.info(
+            f"[{self.account_name}] IP: {ipResponse['ip']} Company: {ipResponse['asn_org']} Country: {ipResponse['country_code']}"
+        )
+
         log.info(f'[{self.account_name}] Getting basic account data...')
         AccountBasicData = self.AccountInfoTelegramRequest()
 
@@ -1320,6 +1356,15 @@ class HamsterKombatAccount:
             'account_info',
         )
 
+        log.info(f'[{self.account_name}] Getting account data...')
+        getAccountDataStatus = self.getAccountData()
+        if getAccountDataStatus is False:
+            return
+
+        log.info(
+            f'[{self.account_name}] Account Balance Coins: {number_to_string(self.balanceCoins)}, Available Taps: {self.availableTaps}, Max Taps: {self.maxTaps}, Total Keys: {self.totalKeys}, Balance Keys: {self.balanceKeys}'
+        )
+
         log.info(f'[{self.account_name}] Getting account config data...')
         AccountConfigVersionData = None
         if self.configVersion != '':
@@ -1338,30 +1383,6 @@ class HamsterKombatAccount:
                 'other_errors',
             )
             return
-
-        DailyCipher = ''
-        if (
-            self.config['auto_get_daily_cipher']
-            and 'dailyCipher' in AccountConfigData
-            and 'cipher' in AccountConfigData['dailyCipher']
-        ):
-            log.info(f'[{self.account_name}] Decoding daily cipher...')
-            DailyCipher = DailyCipherDecode(
-                AccountConfigData['dailyCipher']['cipher']
-            )
-            MorseCode = TextToMorseCode(DailyCipher)
-            log.info(
-                f'\033[1;34m[{self.account_name}] Daily cipher: {DailyCipher} and Morse code: {MorseCode}\033[0m'
-            )
-
-        log.info(f'[{self.account_name}] Getting account data...')
-        getAccountDataStatus = self.getAccountData()
-        if getAccountDataStatus is False:
-            return
-
-        log.info(
-            f'[{self.account_name}] Account Balance Coins: {number_to_string(self.balanceCoins)}, Available Taps: {self.availableTaps}, Max Taps: {self.maxTaps}, Total Keys: {self.totalKeys}, Balance Keys: {self.balanceKeys}'
-        )
 
         log.info(f'[{self.account_name}] Getting account upgrades...')
         upgradesResponse = self.UpgradesForBuyRequest()
@@ -1392,15 +1413,6 @@ class HamsterKombatAccount:
                 f'[{self.account_name}] Failed to get airdrop tasks list.'
             )
 
-        log.info(f'[{self.account_name}] Getting account IP...')
-        ipResponse = self.IPRequest()
-        if ipResponse is None:
-            log.error(f'[{self.account_name}] Failed to get IP.')
-            self.SendTelegramLog(
-                f'[{self.account_name}] Failed to get IP.', 'other_errors'
-            )
-            return
-
         log.info(f'[{self.account_name}] Getting account skins...')
         SkinsData = self.GetSkins()
         if SkinsData is None:
@@ -1409,9 +1421,20 @@ class HamsterKombatAccount:
                 f'[{self.account_name}] Failed to get skins.', 'other_errors'
             )
 
-        log.info(
-            f"[{self.account_name}] IP: {ipResponse['ip']} Company: {ipResponse['asn_org']} Country: {ipResponse['country_code']}"
-        )
+        DailyCipher = ''
+        if (
+            self.config['auto_get_daily_cipher']
+            and 'dailyCipher' in AccountConfigData
+            and 'cipher' in AccountConfigData['dailyCipher']
+        ):
+            log.info(f'[{self.account_name}] Decoding daily cipher...')
+            DailyCipher = DailyCipherDecode(
+                AccountConfigData['dailyCipher']['cipher']
+            )
+            MorseCode = TextToMorseCode(DailyCipher)
+            log.info(
+                f'\033[1;34m[{self.account_name}] Daily cipher: {DailyCipher} and Morse code: {MorseCode}\033[0m'
+            )
 
         if self.config['auto_finish_mini_game']:
             log.info(

@@ -3,8 +3,8 @@ import random
 import time
 import traceback
 
-from core.api import HamsterKombatAccount
-from core.api import log
+from core.api import HamsterKombatAccount, log
+
 # from updater import start_update_checker
 
 # start_update_checker()
