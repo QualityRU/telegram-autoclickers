@@ -894,8 +894,7 @@ class HamsterKombatAccount:
             startDate = responseGameData['startDate']
             remainPoints = responseGameData['remainPoints']
             maxMultiplier = (
-                # min(self.GetConfig('mg_max_tiles_points_percent', 20), 100)
-                max(self.GetConfig('mg_max_tiles_points_percent', 20), 100)
+                min(self.GetConfig('mg_max_tiles_points_percent', 20), 100)
                 / 100
             )
             number = int(
@@ -910,9 +909,8 @@ class HamsterKombatAccount:
                 'Candles': 0,
                 'Tiles': (
                     random.randint(
-                        int(remainPoints * 0.1),
-                        # int(remainPoints * maxMultiplier),
-                        int(remainPoints) + maxMultiplier,
+                        int(remainPoints * 0.01),
+                        int(remainPoints * maxMultiplier),
                     )
                     if remainPoints > 300
                     else remainPoints
@@ -937,7 +935,7 @@ class HamsterKombatAccount:
                     str(score_cipher),
                     base64.b64encode(
                         hashlib.sha256(
-                            f'415t1ng{score_cipher}0ra1cum5h0t'.encode()
+                            f'R1cHard_AnA1{score_cipher}G1ve_Me_y0u7_Pa55w0rD'.encode()
                         ).digest()
                     ).decode(),
                 ]
