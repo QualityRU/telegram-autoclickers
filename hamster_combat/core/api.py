@@ -893,11 +893,10 @@ class HamsterKombatAccount:
             responseGameData = response['dailyKeysMiniGames']
             startDate = responseGameData['startDate']
             remainPoints = responseGameData['remainPoints']
-            # maxMultiplier = (
-            #     min(self.GetConfig('mg_max_tiles_points_percent', 20), 100)
-            #     / 100
-            # )
-            maxMultiplier = self.GetConfig('mg_max_tiles_points_percent', 20)
+            maxMultiplier = (
+                min(self.GetConfig('mg_max_tiles_points_percent', 20), 100)
+                / 100
+            )
             number = int(
                 datetime.datetime.fromisoformat(
                     startDate.replace('Z', '+00:00')
@@ -911,8 +910,7 @@ class HamsterKombatAccount:
                 'Tiles': (
                     random.randint(
                         int(remainPoints * 0.01),
-                        # int(remainPoints * maxMultiplier),
-                        int(remainPoints) + maxMultiplier,
+                        int(remainPoints * maxMultiplier),
                     )
                     if remainPoints > 300
                     else remainPoints
@@ -1108,11 +1106,16 @@ class HamsterKombatAccount:
                     )
                 )
                 clientId = f'{p1}_{p2}'
+            elif promoData['clientIdType'] == '7digStr':
+                clientId = ''.join(random.choices('0123456789', k=7))
             elif promoData['clientIdType'] == 'uuid':
                 clientId = str(uuid.uuid4())
 
         log.info(f"[{self.account_name}] Getting {promoData['name']} key...")
         url = 'https://api.gamepromo.io/promo/login-client'
+
+        if promoData.get('useNewApi'):
+            url = 'https://api.gamepromo.io/promo/1/login-client'
 
         headers_option = {
             'Host': 'api.gamepromo.io',
@@ -1126,8 +1129,10 @@ class HamsterKombatAccount:
             'Host': 'api.gamepromo.io',
             'Origin': '',
             'Referer': '',
-            'Content-Type': 'application/json; charset=utf-8',
+            'Content-Type': 'application/json',
         }
+        if promoData.get('useNewApi'):
+            headers_post['Authorization'] = 'Bearer'
 
         if 'userAgent' in promoData and promoData['userAgent'] != None:
             headers_post['User-Agent'] = promoData['userAgent']
@@ -1176,6 +1181,29 @@ class HamsterKombatAccount:
 
         clientToken = response['clientToken']
 
+        if promoData.get('useNewApi'):
+            url = 'https://api.gamepromo.io/promo/1/get-client'
+            headers_post['Authorization'] = f'Bearer {clientToken}'
+
+            payloadData = {
+                'promoId': promoData['promoId'],
+            }
+
+            payload = json.dumps(payloadData)
+
+            response = self.HttpRequest(
+                url, headers_post, 'POST', 200, payload
+            )
+            if response is None:
+                log.error(
+                    f"[{self.account_name}] Unable to get {promoData['name']} key."
+                )
+                self.SendTelegramLog(
+                    f"[{self.account_name}] Unable to get {promoData['name']} key.",
+                    'other_errors',
+                )
+                return None
+
         TimeSleep = promoData['delay'] + random.randint(1, 5)
         log.info(f'[{self.account_name}] Waiting for {TimeSleep} seconds...')
         time.sleep(TimeSleep)
@@ -1185,8 +1213,9 @@ class HamsterKombatAccount:
         )
 
         url = 'https://api.gamepromo.io/promo/register-event'
-
-        headers_post['Authorization'] = f'Bearer {clientToken}'
+        if promoData.get('useNewApi'):
+            url = 'https://api.gamepromo.io/promo/1/register-event'
+            headers_post['Authorization'] = f'Bearer {clientToken}'
 
         response = None
 
@@ -1234,11 +1263,19 @@ class HamsterKombatAccount:
             )
 
             if response is None or not isinstance(response, dict):
-                time.sleep(promoData['retry_delay'] + random.randint(1, 5))
+                timeout = promoData['retry_delay'] + random.randint(1, 5)
+                log.warning(
+                    f"Event registration for {promoData['name']} failed, retry in {timeout} seconds."
+                )
+                time.sleep(timeout)
                 continue
 
             if not response.get('hasCode', False):
-                time.sleep(promoData['retry_delay'] + random.randint(1, 5))
+                timeout = promoData['retry_delay'] + random.randint(1, 5)
+                log.warning(
+                    f"Event registration for {promoData['name']} was successful, but no code was provided, retry in {timeout} seconds."
+                )
+                time.sleep(timeout)
                 continue
 
             break
@@ -1269,6 +1306,8 @@ class HamsterKombatAccount:
             log.info(f'[{self.account_name}] Event registered successfully.')
 
         url = 'https://api.gamepromo.io/promo/create-code'
+        if promoData.get('useNewApi'):
+            url = 'https://api.gamepromo.io/promo/1/create-code'
 
         headers_option[
             'access-control-request-headers'
@@ -1452,14 +1491,11 @@ class HamsterKombatAccount:
                 f'\033[1;34m[{self.account_name}] Daily cipher: {DailyCipher} and Morse code: {MorseCode}\033[0m'
             )
 
-        if self.config['auto_finish_mini_game']:
-            log.info(
-                f'[{self.account_name}] Attempting to finish mini game...'
-            )
-            time.sleep(1)
-            self.StartMiniGame(
-                AccountConfigData, AccountBasicData['accountInfo']['id']
-            )
+        # temporarily disabled
+        # if self.config["auto_finish_mini_game"]:
+        #     log.info(f"[{self.account_name}] Attempting to finish mini game...")
+        #     time.sleep(1)
+        #     self.StartMiniGame(AccountConfigData, AccountBasicData["accountInfo"]["id"])
 
         # Start tapping
         if self.config['auto_tap']:
