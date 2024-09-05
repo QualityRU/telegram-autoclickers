@@ -148,7 +148,7 @@ SupportedPromoGames = {
         'clientVersion': '1.113.113',
         'eventIdType': '7dig',
         'eventOrigin': 'undefined',
-        'eventType': None,
+        'eventIdType': 'uuid',
         'delay': 30,
         'retry_delay': 60,
     },
