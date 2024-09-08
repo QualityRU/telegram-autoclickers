@@ -582,6 +582,11 @@ class HamsterKombatAccount:
 
         if not comboCards:
             log.info(f'[{self.account_name}] Combo cards info is empty.')
+            return
+
+        if len(comboCards) < 3:
+            log.info(f'[{self.account_name}] Combo cards info is not full.')
+            return
 
         comboCardNames = [card['card_name'] for card in comboCards]
         comboUpgrades = [
@@ -616,7 +621,7 @@ class HamsterKombatAccount:
                     msg = f"[{self.account_name}] To unlock {card['name']} card requires "
                     conditionType = card.get('condition').get('_type')
                     if conditionType == 'ByUpgrade':
-                        upgradeName = next(
+                        reqUpgrade = next(
                             (
                                 upgrade
                                 for upgrade in upgradesResponse.get(
@@ -627,9 +632,7 @@ class HamsterKombatAccount:
                             ),
                             None,
                         )
-                        msg += (
-                            f"{upgradeName} Lvl: {card['condition']['level']}."
-                        )
+                        msg += f"{reqUpgrade['name']} Lvl: {card['condition']['level']}."
                     elif conditionType == 'MoreReferralsCount':
                         refCount = card['condition']['moreReferralsCount']
                         msg += f'{refCount} more refferals.'
@@ -650,7 +653,7 @@ class HamsterKombatAccount:
             'auto_daily_combo_max_price', 5_000_000
         ):
             log.error(
-                f"[{self.account_name}] The price of the combo exceeds the set limit: {self.GetConfig('auto_daily_combo_max_price', 5_000_000)}"
+                f"[{self.account_name}] The price of the combo {number_to_string(comboPrice)} exceeds the set limit: {number_to_string(self.GetConfig('auto_daily_combo_max_price', 5_000_000))}"
             )
             return
 
@@ -1926,11 +1929,6 @@ class HamsterKombatAccount:
                 if task['isCompleted'] == False and (
                     task['id']
                     not in [
-                        'subscribe_hk_facebook',
-                        'subscribe_hk_instagram',
-                        'subscribe_telegram_cryptofam',
-                        'subscribe_telegram_channel',
-                        'subscribe_x_account',
                         'select_exchange',
                         'invite_friends',
                         'streak_days_special',
