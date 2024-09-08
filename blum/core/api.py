@@ -62,7 +62,7 @@ class BlumAccount:
     def Authentication(self) -> str:
         """Аутентификация аккаунта"""
 
-        URL = 'https://gateway.blum.codes/v1/auth/provider/PROVIDER_TELEGRAM_MINI_APP'
+        URL = 'https://user-domain.blum.codes/api/v1/auth/provider/PROVIDER_TELEGRAM_MINI_APP'
         Json = {'query': self.URL}
 
         try:
