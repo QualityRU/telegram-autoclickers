@@ -534,31 +534,6 @@ class HamsterKombatAccount:
 
         log.info(f'[{self.account_name}] Checking for daily combo...')
 
-        upgradesResponse = self.UpgradesForBuyRequest()
-
-        if upgradesResponse is None:
-            log.error(f'[{self.account_name}] Unable to get upgrades for buy.')
-            return
-
-        isClaimed = upgradesResponse.get('dailyCombo', {}).get(
-            'isClaimed', False
-        )
-
-        if isClaimed:
-            log.info(
-                f'\033[1;34m[{self.account_name}] Daily combo already claimed.\033[0m'
-            )
-            return
-
-        currentComboLength = len(
-            upgradesResponse.get('dailyCombo', {}).get('upgradeIds', [])
-        )
-
-        if currentComboLength == 3 and not isClaimed:
-            claimResponse = self.ClaimDailyComboRequest()
-            if claimResponse:
-                return
-
         comboUrl = 'https://hamstercombos.com/hamstercombos/public/api/hamster-kombat-card-list'
         headers = {
             'Accept': 'application/json',
@@ -588,7 +563,32 @@ class HamsterKombatAccount:
             log.info(f'[{self.account_name}] Combo cards info is not full.')
             return
 
-        comboCardNames = [card['card_name'] for card in comboCards]
+        upgradesResponse = self.UpgradesForBuyRequest()
+
+        if upgradesResponse is None:
+            log.error(f'[{self.account_name}] Unable to get upgrades for buy.')
+            return
+
+        isClaimed = upgradesResponse.get('dailyCombo', {}).get(
+            'isClaimed', False
+        )
+
+        if isClaimed:
+            log.info(
+                f'\033[1;34m[{self.account_name}] Daily combo already claimed.\033[0m'
+            )
+            return
+
+        currentComboLength = len(
+            upgradesResponse.get('dailyCombo', {}).get('upgradeIds', [])
+        )
+
+        if currentComboLength == 3 and not isClaimed:
+            claimResponse = self.ClaimDailyComboRequest()
+            if claimResponse:
+                return
+
+        comboCardNames = [card['card_name'].strip() for card in comboCards]
         comboUpgrades = [
             upgrade
             for upgrade in upgradesResponse.get('upgradesForBuy', [])
@@ -649,6 +649,7 @@ class HamsterKombatAccount:
                 f'[{self.account_name}] Not enough coins to buy a daily combo.'
             )
             return
+
         if comboPrice > self.GetConfig(
             'auto_daily_combo_max_price', 5_000_000
         ):
@@ -688,19 +689,24 @@ class HamsterKombatAccount:
                 )
                 continue
 
-            self.balanceCoins = buyResult.get('clickerUser', {}).get(
-                'balanceCoins', 0
+            self.balanceCoins = (
+                buyResult.get('clickerUser', {}).get('balanceCoins', 0)
+                if buyResult.get('clickerUser', {})
+                else 0
             )
             log.info(
                 f"[{self.account_name}] The {card['name']} card has been successfully purchased for daily combo."
             )
 
-        if not buyResult:
-            log.error(f'[{self.account_name}] No result for daily combo..')
-            return
-        isClaimed = buyResult.get('dailyCombo', {}).get('isClaimed', False)
-        currentComboLength = len(
-            buyResult.get('dailyCombo', {}).get('upgradeIds', [])
+        isClaimed = (
+            buyResult.get('dailyCombo', {}).get('isClaimed', False)
+            if buyResult
+            else False
+        )
+        currentComboLength = (
+            len(buyResult.get('dailyCombo', {}).get('upgradeIds', []))
+            if buyResult
+            else 0
         )
 
         if currentComboLength == 3 and not isClaimed:
@@ -1959,7 +1965,12 @@ class HamsterKombatAccount:
                     f'\033[1;34m[{self.account_name}] Tasks already done\033[0m'
                 )
 
-        self.ClaimDailyCombo()
+        try:
+            self.ClaimDailyCombo()
+        except Exception as e:
+            log.error(
+                f'[{self.account_name}] Something went wrong while claming daily combo.'
+            )
 
         # Start buying free tap boost
         if (
