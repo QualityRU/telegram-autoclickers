@@ -1,38 +1,23 @@
 import asyncio
+import os
 import random
+import sys
 import time
 import traceback
 
-from core.api import HamsterKombatAccount, log
-
-# from updater import start_update_checker
-
-# start_update_checker()
-
-try:
-    from config import (
-        AccountList,
-        AccountsRecheckTime,
-        ConfigFileVersion,
-        MaxRandomDelay,
-    )
-except ImportError:
-    print('Config file not found.')
-    print('Create a copy of config.py.example and rename it to config.py')
-    print('And fill in the required fields.')
-    exit()
-
-if 'ConfigFileVersion' not in locals() or ConfigFileVersion != 1:
-    print('Invalid config file version.')
-    print('Please update the config file to the latest version.')
-    print('Create a copy of config.py.example and rename it to config.py')
-    print('And fill in the required fields.')
-    exit()
+from core.api import (
+    AccountList,
+    AccountsRecheckTime,
+    HamsterKombatAccount,
+    MaxRandomDelay,
+    log,
+    w,
+)
 
 accounts = []
 
 
-def RunAccounts(accounts):
+def RunAccounts():
     for account in AccountList:
         accounts.append(HamsterKombatAccount(account))
         accounts[-1].SendTelegramLog(
@@ -41,53 +26,58 @@ def RunAccounts(accounts):
         )
 
     while True:
-        log.info('\033[1;33mStarting all accounts...\033[0m')
+        print(
+            f' {w.y}===============[ STARTING ALL ACCOUNTS ]=============== {w.rs}'
+        )
         for account in accounts:
             account.Start()
 
         if AccountsRecheckTime < 1 and MaxRandomDelay < 1:
             log.error(
-                'AccountsRecheckTime and MaxRandomDelay values are set to 0, bot will close now.'
+                f'{w.r}AccountsRecheckTime{w.rs} and {w.r}MaxRandomDelay{w.rs} values are set to 0, bot will close now.'
             )
             return
 
         if MaxRandomDelay > 0:
             randomDelay = random.randint(1, MaxRandomDelay)
             log.error(
-                f'Sleeping for {randomDelay} seconds because of random delay...'
+                f' 😴 Sleeping for {randomDelay} seconds because of random delay.'
             )
             time.sleep(randomDelay)
 
         if AccountsRecheckTime > 0:
-            log.error(
-                f'Rechecking all accounts in {AccountsRecheckTime} seconds...'
+            log.warning(
+                f' 💤 Rechecking all accounts in {AccountsRecheckTime} seconds.'
             )
             time.sleep(AccountsRecheckTime)
 
 
-def main():
-    log.info(
-        '------------------------------------------------------------------------'
-    )
-    log.info(
-        '------------------------------------------------------------------------'
-    )
-    log.info(
-        '\033[1;32mWelcome to [Master Hamster Kombat] Auto farming bot...\033[0m'
-    )
-    log.info('\033[1;36mTo stop the bot, press Ctrl + C\033[0m')
-    log.info(
-        '------------------------------------------------------------------------'
-    )
-    log.info(
-        '------------------------------------------------------------------------'
-    )
+def loading_bar2(duration):
+    total_steps = 20
+    interval = duration / total_steps
 
-    time.sleep(2)
+    print('Loading:', end=' ', flush=True)
+
+    for i in range(1, total_steps + 1):
+        sys.stdout.write(
+            f"\rLoading: {'█' * i}{' ' * (total_steps - i)} {int(i * 100 / total_steps)}%"
+        )
+        sys.stdout.flush()
+        time.sleep(interval)
+
+    sys.stdout.write(f"\rLoading: {'█' * total_steps} 100%\n")
+    sys.stdout.flush()
+
+
+def main():
+    os.system('cls')
+    loading_bar2(5)
+    os.system('cls')
+
     try:
-        asyncio.run(RunAccounts(accounts))
+        asyncio.run(RunAccounts())
     except KeyboardInterrupt:
-        log.error('Stopping Master Hamster Kombat Auto farming bot...')
+        log.error('Bot Stop by user!')
     except Exception as e:
         accounts[0].SendTelegramLog(
             f'[{accounts[0].account_name}] Main error.\n\n{traceback.format_exc()}',
