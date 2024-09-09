@@ -695,6 +695,9 @@ class HamsterKombatAccount:
                 f"[{self.account_name}] The {card['name']} card has been successfully purchased for daily combo."
             )
 
+        if not buyResult:
+            log.error(f'[{self.account_name}] No result for daily combo..')
+            return
         isClaimed = buyResult.get('dailyCombo', {}).get('isClaimed', False)
         currentComboLength = len(
             buyResult.get('dailyCombo', {}).get('upgradeIds', [])
