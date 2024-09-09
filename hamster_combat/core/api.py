@@ -18,7 +18,7 @@ from core.utilities import *
 try:
     from config import *
 except ImportError:
-    os.system('cls')
+    clear_screen()
     print(
         f"""
     ==============================================================================
@@ -31,7 +31,7 @@ except ImportError:
     exit()
 
 if 'ConfigFileVersion' not in locals() or ConfigFileVersion != 1:
-    os.system('cls')
+    clear_screen()
     print(
         f"""
     ==============================================================================

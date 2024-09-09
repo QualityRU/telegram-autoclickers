@@ -10,6 +10,7 @@ from core.api import (
     AccountsRecheckTime,
     HamsterKombatAccount,
     MaxRandomDelay,
+    clear_screen,
     log,
     w,
 )
@@ -70,9 +71,9 @@ def loading_bar2(duration):
 
 
 def main():
-    os.system('cls')
+    clear_screen()
     loading_bar2(5)
-    os.system('cls')
+    clear_screen()
 
     try:
         asyncio.run(RunAccounts())

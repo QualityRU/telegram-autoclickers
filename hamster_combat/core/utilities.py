@@ -1,4 +1,5 @@
 import base64
+import os
 
 
 # Sort upgrades by best profit per hour (profitPerHourDelta / price)
@@ -99,3 +100,7 @@ def TextToMorseCode(text):
         if char in morse_code:
             morse += morse_code[char] + ' '
     return morse
+
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
