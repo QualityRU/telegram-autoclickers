@@ -633,11 +633,13 @@ class HamsterKombatAccount:
             if claimResponse:
                 return
 
-        comboCardNames = [card['card_name'].strip() for card in comboCards]
+        comboCardNames = [
+            card['card_name'].strip().lower() for card in comboCards
+        ]
         comboUpgrades = [
             upgrade
             for upgrade in upgradesResponse.get('upgradesForBuy', [])
-            if upgrade['name'] in comboCardNames
+            if upgrade['name'].lower() in comboCardNames
         ]
         availableUpgrades = [
             card
