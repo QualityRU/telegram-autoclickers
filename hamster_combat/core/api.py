@@ -169,7 +169,7 @@ class HamsterKombatAccount:
                     f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Invalid method: {w.r}{method}'
                 )
                 self.SendTelegramLog(
-                    f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Invalid method: {method}',
+                    f'[{self.account_name}]: ✖ Invalid method: {method}',
                     'http_errors',
                 )
                 return None
@@ -185,7 +185,7 @@ class HamsterKombatAccount:
                     f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Response: {w.r}{response.text}'
                 )
                 self.SendTelegramLog(
-                    f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Status code is not {validStatusCodes}',
+                    f'[{self.account_name}]: ✖ Status code is not {validStatusCodes}',
                     'http_errors',
                 )
                 return None
@@ -204,8 +204,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Error: {w.r}{e}'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Error: {e}',
-                'http_errors',
+                f'[{self.account_name}]: ✖ Error: {e}', 'http_errors'
             )
             return None
 
@@ -352,7 +351,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: 🌐 {w.r}Unable to get account data.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: 🌐 {w.r}Unable to get account data.',
+                f'[{self.account_name}]: 🌐 Unable to get account data.',
                 'other_errors',
             )
             return False
@@ -362,7 +361,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ {w.r}Invalid account data.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Invalid account data.',
+                f'[{self.account_name}]: ✖ Invalid account data.',
                 'other_errors',
             )
             return False
@@ -372,7 +371,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ⚠ Invalid balance coins.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ⚠ Invalid balance coins.',
+                f'[{self.account_name}]: ⚠ Invalid balance coins.',
                 'other_errors',
             )
             return False
@@ -407,7 +406,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖  Failed to get boosts list.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖  Failed to get boosts list.',
+                f'[{self.account_name}]: ✖  Failed to get boosts list.',
                 'other_errors',
             )
             return None
@@ -944,7 +943,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖  Failed to buy the card.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖  Failed to buy the card.',
+                f'[{self.account_name}]: ✖  Failed to buy the card.',
                 'other_errors',
             )
             return False
@@ -999,7 +998,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Failed to get upgrades list.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Failed to get upgrades list.',
+                f'[{self.account_name}]: ✖ Failed to get upgrades list.',
                 'other_errors',
             )
             return False
@@ -1120,7 +1119,7 @@ class HamsterKombatAccount:
             )
 
             self.SendTelegramLog(
-                f"{w.rs}{w.g}[{self.account_name}]{w.rs}: 😪 Balance is too low to buy the best card, Best card: {current_selected_card['name']} with profit {current_selected_card['profitPerHourDelta']} and price {number_to_string(current_selected_card['price'])}, Level: {current_selected_card['level']}",
+                f"[{self.account_name}]: 😪 Balance is too low to buy the best card, Best card: {current_selected_card['name']} with profit {current_selected_card['profitPerHourDelta']} and price {number_to_string(current_selected_card['price'])}, Level: {current_selected_card['level']}",
                 'upgrades',
             )
             return False
@@ -1136,7 +1135,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✅ Best card purchase completed successfully | profit increased +{w.b}{number_to_string(self.ProfitPerHour)} {w.rs}coins | Spend tokens: {w.y}{number_to_string(self.SpendTokens)}'
             )
             self.SendTelegramLog(
-                f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Bought {current_selected_card['name']} with profit {current_selected_card['profitPerHourDelta']} and price {number_to_string(current_selected_card['price'])}, Level: {current_selected_card['level']}",
+                f"[{self.account_name}]: Bought {current_selected_card['name']} with profit {current_selected_card['profitPerHourDelta']} and price {number_to_string(current_selected_card['price'])}, Level: {current_selected_card['level']}",
                 'upgrades',
             )
 
@@ -1150,7 +1149,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to get daily keys mini game.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to get daily keys mini game.',
+                f'[{self.account_name}]: Unable to get daily keys mini game.',
                 'other_errors',
             )
             return
@@ -1162,7 +1161,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to get promo games before starting minigames.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to get promo games befor starting minigames.',
+                f'[{self.account_name}]: Unable to get promo games before starting minigames.',
                 'other_errors',
             )
             return
@@ -1175,7 +1174,7 @@ class HamsterKombatAccount:
                     f"{w.rs}{w.g}[{self.account_name}]{w.rs}: 🤖 {w.y}Detected new daily mini game {w.r}{game['id']}, {w.y}check project github for updates."
                 )
                 self.SendTelegramLog(
-                    f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Detected new daily mini game {game['id']}, check project github for updates.",
+                    f"[{self.account_name}]: Detected new daily mini game {game['id']}, check project github for updates.",
                     'other_errors',
                 )
                 continue
@@ -1224,7 +1223,7 @@ class HamsterKombatAccount:
                     f"{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to start mini game {w.r}{game['id']}."
                 )
                 self.SendTelegramLog(
-                    f"{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to start mini game {game['id']}.",
+                    f"[{self.account_name}]: ✖ Unable to start mini game {game['id']}.",
                     'other_errors',
                 )
                 continue
@@ -1234,7 +1233,7 @@ class HamsterKombatAccount:
                     f"{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to get daily mini game {w.r}{game['id']}."
                 )
                 self.SendTelegramLog(
-                    f"{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to get daily mini game {game['id']}.",
+                    f"[{self.account_name}]: ✖ Unable to get daily mini game {game['id']}.",
                     'other_errors',
                 )
                 continue
@@ -1250,7 +1249,7 @@ class HamsterKombatAccount:
                     f"{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to get daily mini game {w.r}{game['id']}."
                 )
                 self.SendTelegramLog(
-                    f"{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to get daily keys mini game {game['id']}.",
+                    f"[{self.account_name}]: ✖ Unable to get daily keys mini game {game['id']}.",
                     'other_errors',
                 )
                 continue
@@ -1269,7 +1268,7 @@ class HamsterKombatAccount:
                     f"{w.rs}{w.g}[{self.account_name}]{w.rs}: 😶 Unable to claim mini game {w.r}{game['id']}."
                 )
                 self.SendTelegramLog(
-                    f"{w.rs}{w.g}[{self.account_name}]{w.rs}: 😶 Unable to claim mini game {game['id']}.",
+                    f"[{self.account_name}]: 😶 Unable to claim mini game {game['id']}.",
                     'other_errors',
                 )
                 continue
@@ -1363,7 +1362,7 @@ class HamsterKombatAccount:
                     f"{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to claim mini game {w.r}{game['id']}."
                 )
                 self.SendTelegramLog(
-                    f"{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to claim mini game {game['id']}.",
+                    f"[{self.account_name}]: ✖ Unable to claim mini game {game['id']}.",
                     'other_errors',
                 )
                 return
@@ -1411,7 +1410,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to get playground games.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to get playground games.',
+                f'[{self.account_name}]: Unable to get playground games.',
                 'other_errors',
             )
             return
@@ -1421,7 +1420,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to get playground games.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to get playground games.',
+                f'[{self.account_name}]: Unable to get playground games.',
                 'other_errors',
             )
             return
@@ -1606,7 +1605,7 @@ class HamsterKombatAccount:
                 f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to get {w.bb}{promoData['name']}{w.rs}key."
             )
             self.SendTelegramLog(
-                f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to get {promoData['name']} key.",
+                f"[{self.account_name}]: Unable to get {promoData['name']} key.",
                 'other_errors',
             )
             return None
@@ -1631,7 +1630,7 @@ class HamsterKombatAccount:
                     f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to get {w.bb}{promoData['name']}{w.rs} key."
                 )
                 self.SendTelegramLog(
-                    f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to get {promoData['name']} key.",
+                    f"[{self.account_name}]: Unable to get {promoData['name']} key.",
                     'other_errors',
                 )
                 return None
@@ -1727,7 +1726,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to register event.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to register event.',
+                f'[{self.account_name}]: Unable to register event.',
                 'other_errors',
             )
             return None
@@ -1738,7 +1737,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to register event, may need to increase retryCount'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to register event, may need to increase retryCount',
+                f'[{self.account_name}]: Unable to register event, may need to increase retryCount',
                 'other_errors',
             )
             return None
@@ -1769,7 +1768,7 @@ class HamsterKombatAccount:
                 f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to get {w.bb}{promoData['name']}{w.rs} key."
             )
             self.SendTelegramLog(
-                f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to get {promoData['name']} key.",
+                f"[{self.account_name}]: Unable to get {promoData['name']} key.",
                 'other_errors',
             )
             return None
@@ -1783,7 +1782,7 @@ class HamsterKombatAccount:
                 f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to get {w.bb}{promoData['name']}{w.rs} key."
             )
             self.SendTelegramLog(
-                f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Unable to get {promoData['name']} key.",
+                f"[{self.account_name}]: Unable to get {promoData['name']} key.",
                 'other_errors',
             )
             return None
@@ -1827,7 +1826,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ {w.r}Failed to get IP.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Failed to get IP.',
+                f'[{self.account_name}]: ✖ Failed to get IP.',
                 'other_errors',
             )
             return
@@ -1857,7 +1856,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to get account basic data.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to get account basic data.',
+                f'[{self.account_name}]: ✖ Unable to get account basic data.',
                 'other_errors',
             )
             return
@@ -1869,7 +1868,7 @@ class HamsterKombatAccount:
             f"\033[1;35m{w.rs}{w.g}[{self.account_name}]{w.rs}: └─ Account Name: {w.mb}{AccountBasicData['accountInfo']['name']}"
         )
         self.SendTelegramLog(
-            f"{w.rs}{w.g}[{self.account_name}]{w.rs}: 🔢 Account ID: {AccountBasicData['accountInfo']['id']}",
+            f"[{self.account_name}]: 🔢 Account ID: {AccountBasicData['accountInfo']['id']}",
             'account_info',
         )
 
@@ -1907,7 +1906,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to get account config data.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Unable to get account config data.',
+                f'[{self.account_name}]: ✖ Unable to get account config data.',
                 'other_errors',
             )
             return
@@ -1922,7 +1921,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Failed to get upgrades list.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Failed to get upgrades list.',
+                f'[{self.account_name}]: ✖ Failed to get upgrades list.',
                 'other_errors',
             )
             return
@@ -1937,7 +1936,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Failed to get tasks list.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Failed to get tasks list.',
+                f'[{self.account_name}]: ✖ Failed to get tasks list.',
                 'other_errors',
             )
 
@@ -1960,7 +1959,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Failed to get skins.'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ Failed to get skins.',
+                f'[{self.account_name}]: ✖ Failed to get skins.',
                 'other_errors',
             )
 
@@ -1985,10 +1984,14 @@ class HamsterKombatAccount:
             )
 
         # temporarily disabled
-        # if self.config["auto_finish_mini_game"]:
-        #     log.info(f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Attempting to finish mini game.")
-        #     time.sleep(1)
-        #     self.StartMiniGame(AccountConfigData, AccountBasicData["accountInfo"]["id"])
+        if self.config['auto_finish_mini_game']:
+            log.info(
+                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: Attempting to finish mini game.'
+            )
+            time.sleep(1)
+            self.StartMiniGame(
+                AccountConfigData, AccountBasicData['accountInfo']['id']
+            )
 
         # Start tapping
         if self.config['auto_tap']:
@@ -2040,7 +2043,7 @@ class HamsterKombatAccount:
                     f'{w.rs}{w.g}[{self.account_name}]{w.rs}: └─  Daily cipher claimed successfully.'
                 )
                 self.SendTelegramLog(
-                    f'{w.rs}{w.g}[{self.account_name}]{w.rs}: 🙌 Daily cipher claimed successfully. Text was: {DailyCipher}, Morse code was: {TextToMorseCode(DailyCipher)}',
+                    f'[{self.account_name}]: 🙌 Daily cipher claimed successfully. Text was: {DailyCipher}, Morse code was: {TextToMorseCode(DailyCipher)}',
                     'daily_cipher',
                 )
 
@@ -2110,7 +2113,7 @@ class HamsterKombatAccount:
                     f'{w.rs}{w.g}[{self.account_name}]{w.rs}: └─  Daily task completed successfully, Week: {w.g}{week}{w.rs}, Day: {w.g}{day}{w.rs}, Reward: {w.g}{reward}{w.rs}.'
                 )
                 self.SendTelegramLog(
-                    f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✅ Daily task completed successfully, Week: {week}, Day: {day}, Reward: {reward}.',
+                    f'[{self.account_name}]: ✅ Daily task completed successfully, Week: {week}, Day: {day}, Reward: {reward}.',
                     'daily_task',
                 )
 
@@ -2145,7 +2148,7 @@ class HamsterKombatAccount:
                         f'{w.rs}{w.g}[{self.account_name}]{w.rs}: └─  Task completed - id: {w.r}{selected_task}{w.rs}, Reward: {w.y}{reward}'
                     )
                     self.SendTelegramLog(
-                        f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✅ Task completed - id: {selected_task}, Reward: {reward}',
+                        f'[{self.account_name}]: ✅ Task completed - id: {selected_task}, Reward: {reward}',
                         'daily_task',
                     )
             if selected_task is None:
@@ -2221,7 +2224,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: 💸 Spent: - {w.r}{number_to_string(self.SpendTokens)}'
             )
             self.SendTelegramLog(
-                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: 💰 Final account balance: {number_to_string(self.balanceCoins)} coins, 💹 Your profit per hour is {number_to_string(self.earnPassivePerHour)} (+{number_to_string(self.ProfitPerHour)}), 💸 Spent: {number_to_string(self.SpendTokens)}',
+                f'[{self.account_name}]: 💰 Final account balance: {number_to_string(self.balanceCoins)} coins, 💹 Your profit per hour is {number_to_string(self.earnPassivePerHour)} (+{number_to_string(self.ProfitPerHour)}), 💸 Spent: {number_to_string(self.SpendTokens)}',
                 'upgrades',
             )
             return
@@ -2243,7 +2246,7 @@ class HamsterKombatAccount:
                     f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ {w.r}Failed to get upgrades list.'
                 )
                 self.SendTelegramLog(
-                    f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✖ {w.r}Failed to get upgrades list.',
+                    f'[{self.account_name}]: ✖ Failed to get upgrades list.',
                     'other_errors',
                 )
                 return
@@ -2317,7 +2320,7 @@ class HamsterKombatAccount:
                 f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✅ Upgrade bought successfully'
             )
             self.SendTelegramLog(
-                f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Bought {current_selected_card['name']} with profit {current_selected_card['profitPerHourDelta']} and price {number_to_string(current_selected_card['price'])}, Level: {current_selected_card['level']}",
+                f"[{self.account_name}]: Bought {current_selected_card['name']} with profit {current_selected_card['profitPerHourDelta']} and price {number_to_string(current_selected_card['price'])}, Level: {current_selected_card['level']}",
                 'upgrades',
             )
             time.sleep(5)
@@ -2343,59 +2346,6 @@ class HamsterKombatAccount:
         )
 
         self.SendTelegramLog(
-            f'{w.rs}{w.g}[{self.account_name}]{w.rs}: 💰 Final account balance: {number_to_string(self.balanceCoins)} coins, 💹 Your profit per hour is {number_to_string(self.earnPassivePerHour)} (+{number_to_string(self.ProfitPerHour)}), 💸 Spent: {number_to_string(self.SpendTokens)}',
+            f'[{self.account_name}]: 💰 Final account balance: {number_to_string(self.balanceCoins)} coins, 💹 Your profit per hour is {number_to_string(self.earnPassivePerHour)} (+{number_to_string(self.ProfitPerHour)}), 💸 Spent: {number_to_string(self.SpendTokens)}',
             'account_info',
         )
-
-
-def RunAccounts():
-    accounts = []
-    for account in AccountList:
-        accounts.append(HamsterKombatAccount(account))
-        accounts[-1].SendTelegramLog(
-            f'[{accounts[-1].account_name}] Hamster Kombat Auto farming bot started successfully.',
-            'general_info',
-        )
-
-    while True:
-        print(
-            f' {w.y}===============[ STARTING ALL ACCOUNTS ]=============== {w.rs}'
-        )
-        for account in accounts:
-            account.Start()
-
-        if AccountsRecheckTime < 1 and MaxRandomDelay < 1:
-            log.error(
-                f'{w.r}AccountsRecheckTime{w.rs} and {w.r}MaxRandomDelay{w.rs} values are set to 0, bot will close now.'
-            )
-            return
-
-        if MaxRandomDelay > 0:
-            randomDelay = random.randint(1, MaxRandomDelay)
-            log.error(
-                f' 😴 Sleeping for {randomDelay} seconds because of random delay.'
-            )
-            time.sleep(randomDelay)
-
-        if AccountsRecheckTime > 0:
-            log.warning(
-                f' 💤 Rechecking all accounts in {AccountsRecheckTime} seconds.'
-            )
-            time.sleep(AccountsRecheckTime)
-
-
-def loading_bar2(duration):
-    total_steps = 20
-    interval = duration / total_steps
-
-    print('Loading:', end=' ', flush=True)
-
-    for i in range(1, total_steps + 1):
-        sys.stdout.write(
-            f"\rLoading: {'█' * i}{' ' * (total_steps - i)} {int(i * 100 / total_steps)}%"
-        )
-        sys.stdout.flush()
-        time.sleep(interval)
-
-    sys.stdout.write(f"\rLoading: {'█' * total_steps} 100%\n")
-    sys.stdout.flush()
