@@ -2074,32 +2074,6 @@ class HamsterKombatAccount:
                 log.info(
                     f'\033[1;34m{w.rs}{w.g}[{self.account_name}]{w.rs}: ✅ Daily task already completed.'
                 )
-                availableSkins = self.account_data.get('skins', {}).get(
-                    'available', []
-                )
-                weeks = streak_days.get('weeks')
-                days = streak_days.get('days')
-                buyResponse = None
-                if days == 7:
-                    if weeks == 1 and not any(
-                        item['skinId'] == 'skin30' for item in availableSkins
-                    ):
-                        buyResponse = self.BuySkin('skin30')
-                    elif weeks == 2 and not any(
-                        item['skinId'] == 'skin31' for item in availableSkins
-                    ):
-                        buyResponse = self.BuySkin('skin31')
-                    elif weeks == 3 and not any(
-                        item['skinId'] == 'skin32' for item in availableSkins
-                    ):
-                        buyResponse = self.BuySkin('skin32')
-
-                    if buyResponse is None:
-                        log.error(f' ✖ Unable to obtain weekly reward skin.')
-                    else:
-                        log.info(
-                            f' 👌 Successfully obtained weekly reward skin'
-                        )
 
             else:
                 log.info(
