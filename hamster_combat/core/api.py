@@ -1564,7 +1564,10 @@ class HamsterKombatAccount:
             'Referer': '',
             'Content-Type': 'application/json',
         }
-        if promoData.get('useNewApi'):
+        if (
+            promoData.get('useNewApi')
+            and promoData['promoId'] == 'e68b39d2-4880-4a31-b3aa-0393e7df10c7'
+        ):
             headers_post['Authorization'] = 'Bearer'
 
         if 'userAgent' in promoData and promoData['userAgent'] != None:
