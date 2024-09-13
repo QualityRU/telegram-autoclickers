@@ -48,7 +48,7 @@ if 'ConfigFileVersion' not in locals() or ConfigFileVersion != 1:
 # Logging configuration
 LOG_LEVEL = logging.DEBUG
 # Include date and time in the log format
-LOGFORMAT = f'{w.cb}[MasterHamsterKombatBot]{w.rs} {w.bt}[%(asctime)s]{w.bt} %(log_color)s[%(levelname)s]%(reset)s %(log_color)s%(message)s%(reset)s'
+LOGFORMAT = f'{w.cb}[HamsterKombatBot]{w.rs} {w.bt}[%(asctime)s]{w.bt} %(log_color)s[%(levelname)s]%(reset)s %(log_color)s%(message)s%(reset)s'
 
 logging.root.setLevel(LOG_LEVEL)
 formatter = ColoredFormatter(
@@ -154,15 +154,19 @@ class HamsterKombatAccount:
         try:
             if method == 'GET':
                 response = requests.get(
-                    url, headers=defaultHeaders, proxies=self.Proxy
+                    url, headers=defaultHeaders, proxies=self.Proxy, timeout=30
                 )
             elif method == 'POST':
                 response = requests.post(
-                    url, headers=headers, data=payload, proxies=self.Proxy
+                    url,
+                    headers=headers,
+                    data=payload,
+                    proxies=self.Proxy,
+                    timeout=30,
                 )
             elif method == 'OPTIONS':
                 response = requests.options(
-                    url, headers=headers, proxies=self.Proxy
+                    url, headers=headers, proxies=self.Proxy, timeout=30
                 )
             else:
                 log.error(
@@ -2077,7 +2081,6 @@ class HamsterKombatAccount:
                 log.info(
                     f'\033[1;34m{w.rs}{w.g}[{self.account_name}]{w.rs}: ✅ Daily task already completed.'
                 )
-
             else:
                 log.info(
                     f'{w.rs}{w.g}[{self.account_name}]{w.rs}: ✍ Attempting to complete daily task.'
