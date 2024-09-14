@@ -48,7 +48,7 @@ if 'ConfigFileVersion' not in locals() or ConfigFileVersion != 1:
 # Logging configuration
 LOG_LEVEL = logging.DEBUG
 # Include date and time in the log format
-LOGFORMAT = f'{w.cb}[HamsterKombatBot]{w.rs} {w.bt}[%(asctime)s]{w.bt} %(log_color)s[%(levelname)s]%(reset)s %(log_color)s%(message)s%(reset)s'
+LOGFORMAT = f'{w.cb}[MasterHamsterKombatBot]{w.rs} {w.bt}[%(asctime)s]{w.bt} %(log_color)s[%(levelname)s]%(reset)s %(log_color)s%(message)s%(reset)s'
 
 logging.root.setLevel(LOG_LEVEL)
 formatter = ColoredFormatter(
@@ -1434,14 +1434,14 @@ class HamsterKombatAccount:
         promo_count = 0
         shuffled_promos = response['promos'][:]
         random.shuffle(shuffled_promos)
-        for promo in shuffled_promos:
 
+        for promo in shuffled_promos:
             if promo['promoId'] not in SupportedPromoGames:
                 log.warning(
                     f"{w.rs}{w.g}[{self.account_name}]{w.rs}: 🤖 {w.y}Detected unknown playground game: {w.r}{promo['title']['en']}. {w.y}Check project github for updates."
                 )
-                continue
 
+        for promo in shuffled_promos:
             if self.CheckPlayGroundGameState(promo, response):
                 promoData = SupportedPromoGames[promo['promoId']]
 
