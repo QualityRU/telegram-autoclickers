@@ -181,7 +181,7 @@ SupportedPromoGames = {
         'eventIdType': 'uuid',
         'eventOrigin': 'undefined',
         'eventType': 'test',
-        'delay': 120,
+        'delay': 30,
         'retry_delay': 60,
     },
 }
