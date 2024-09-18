@@ -208,7 +208,7 @@ class BlumAccount:
     def Get_Tasks(self) -> list:
         """Список заданий"""
 
-        URL = 'https://game-domain.blum.codes/api/v1/tasks'
+        URL = 'https://earn-domain.blum.codes/api/v1/tasks'
         Headers_bear = HEADERS.copy()
         Headers_bear['authorization'] = f'Bearer {self.Token}'
 
@@ -220,7 +220,7 @@ class BlumAccount:
     def Start_Tasks(self, ID: str) -> bool:
         """Запуск задания"""
 
-        URL = f'https://game-domain.blum.codes/api/v1/tasks/{ID}/start'
+        URL = f'https://earn-domain.blum.codes/api/v1/tasks/{ID}/start'
         Headers_bear = HEADERS.copy()
         Headers_bear['authorization'] = f'Bearer {self.Token}'
 
@@ -238,7 +238,7 @@ class BlumAccount:
     def Claim_Tasks(self, ID: str) -> dict:
         """Получение награды за выполненное задание"""
 
-        URL = f'https://game-domain.blum.codes/api/v1/tasks/{ID}/claim'
+        URL = f'https://earn-domain.blum.codes/api/v1/tasks/{ID}/claim'
         Headers_bear = HEADERS.copy()
         Headers_bear['authorization'] = f'Bearer {self.Token}'
 
@@ -317,46 +317,106 @@ class BlumAccount:
                         )
 
                     # Выполнение всех доступных заданий
-                    Tasks = self.Get_Tasks()   # Список заданий
-                    for Section in Tasks:
-                        for Task in Section['tasks']:
-                            if Task['status'] == 'NOT_STARTED' and Task[
-                                'title'
-                            ] not in [
-                                'Invite',
-                                'Farm',
-                            ]:   # Если задание ещё не начато
-                                if self.Start_Tasks(Task['id']):
-                                    sleep(
-                                        randint(3, 6)
-                                    )   # Промежуточное ожидание
-                                    Claim_Tasks = self.Claim_Tasks(Task['id'])
-                                    if Claim_Tasks['Status']:
-                                        self.Logging(
-                                            'Success',
-                                            self.Name,
-                                            '⚡️',
-                                            f'Задание выполнено! +{Claim_Tasks["Reward"]}',
-                                        )
-                                        sleep(
-                                            randint(3, 6)
-                                        )   # Промежуточное ожидание
-
-                            elif (
-                                Task['status'] == 'READY_FOR_CLAIM'
-                            ):   # Если задание уже начато
-                                Claim_Tasks = self.Claim_Tasks(Task['id'])
-
-                                if Claim_Tasks['Status']:
+                    started = 0
+                    completed = 0
+                    Category = self.Get_Tasks()   # Список заданий
+                    for Section in Category:
+                        tasks = Section.get('tasks', [])
+                        print(tasks)
+                        for task in tasks:
+                            if started == 2 or completed == 2:
+                                break
+                            if task['status'] == 'FINISHED' or task.get(
+                                'isHidden', False
+                            ):
+                                continue
+                            if 'socialSubscription' not in task or task.get(
+                                'socialSubscription', {}
+                            ).get('openInTelegram', False):
+                                continue
+                            if task['status'] == 'NOT_STARTED':
+                                self.Start_Tasks(task['id'])
+                                sleep(randint(3, 6))
+                                started += 1
+                            elif task['status'] == 'READY_FOR_CLAIM':
+                                if self.Claim_Tasks(task['id']):
                                     self.Logging(
                                         'Success',
                                         self.Name,
                                         '⚡️',
-                                        f'Задание выполнено! +{Claim_Tasks["Reward"]}',
+                                        'Задание выполнено!',
                                     )
-                                    sleep(
-                                        randint(3, 6)
-                                    )   # Промежуточное ожидание
+                                sleep(randint(3, 6))
+                                completed += 1
+                        sub_sections = Section.get('subSections', [])
+                        for sub_section in sub_sections:
+                            tasks = sub_section.get('tasks', [])
+                            for task in tasks:
+                                if started == 2 or completed == 2:
+                                    break
+                                if task['status'] == 'FINISHED' or task.get(
+                                    'isHidden', False
+                                ):
+                                    continue
+                                if (
+                                    'socialSubscription' not in task
+                                    or task.get('socialSubscription', {}).get(
+                                        'openInTelegram', False
+                                    )
+                                ):
+                                    continue
+                                if task['status'] == 'NOT_STARTED':
+                                    self.Start_Tasks(task['id'])
+                                    sleep(randint(3, 6))
+                                    started += 1
+                                elif task['status'] == 'READY_FOR_CLAIM':
+                                    if self.Claim_Tasks(task['id']):
+                                        self.Logging(
+                                            'Success',
+                                            self.Name,
+                                            '⚡️',
+                                            'Задание выполнено!',
+                                        )
+                                    sleep(randint(3, 6))
+                                    completed += 1
+                        # for Task in Section['tasks']:
+                        #     if Task['status'] == 'NOT_STARTED' and Task[
+                        #         'title'
+                        #     ] not in [
+                        #         'Invite',
+                        #         'Farm',
+                        #     ]:   # Если задание ещё не начато
+                        #         if self.Start_Tasks(Task['id']):
+                        #             sleep(
+                        #                 randint(3, 6)
+                        #             )   # Промежуточное ожидание
+                        #             Claim_Tasks = self.Claim_Tasks(Task['id'])
+                        #             if Claim_Tasks['Status']:
+                        #                 self.Logging(
+                        #                     'Success',
+                        #                     self.Name,
+                        #                     '⚡️',
+                        #                     f'Задание выполнено! +{Claim_Tasks["Reward"]}',
+                        #                 )
+                        #                 sleep(
+                        #                     randint(3, 6)
+                        #                 )   # Промежуточное ожидание
+
+                        #     elif (
+                        #         Task['status'] == 'READY_FOR_CLAIM'
+                        #     ):   # Если задание уже начато
+                        #         Claim_Tasks = self.Claim_Tasks(Task['id'])
+
+                        #         if Claim_Tasks['Status']:
+                        #             self.Logging(
+                        #                 'Success',
+                        #                 self.Name,
+                        #                 '⚡️',
+                        #                 f'Задание выполнено! +{Claim_Tasks["Reward"]}',
+                        #             )
+                        #             sleep(
+                        #                 randint(3, 6)
+                        #             )   # Промежуточное ожидание
 
                     Waiting = randint(
                         3_500, 3_600

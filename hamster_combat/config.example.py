@@ -30,9 +30,9 @@ AccountList = [
             'auto_get_task': True,  # Enable auto get (Youtube/Twitter and ...) task to True, or set it to False to disable
             'auto_get_skin': True,  # Enable auto get skin by setting it to True, or set it to False to disable
             'auto_finish_mini_game': True,  # Enable auto finish mini game by setting it to True, or set it to False to disable
-            # "auto_claim_daily_combo": True,  # Enable auto claim daily combo by setting it to True, or set it to False to disable
-            # "auto_daily_combo_enable": False,  # Enable auto daily combo by setting it to True, or set it to False to disable
-            # "auto_daily_combo_max_price": 5_000_000,  # Maximum price of combo for purchase
+            'auto_claim_daily_combo': True,  # Enable auto claim daily combo by setting it to True, or set it to False to disable
+            'auto_daily_combo_enable': True,  # Enable auto daily combo by setting it to True, or set it to False to disable
+            'auto_daily_combo_max_price': 5_000_000,  # Maximum price of combo for purchase
             'auto_playground_games': True,  # Enable auto playground games by setting it to True, or set it to False to disable
             # If you have over 5 accounts, disable the auto_playground_games feature or use a proxy for each account.
             'auto_upgrade': True,  # Enable auto-upgrade by setting it to True, or set it to False to disable
