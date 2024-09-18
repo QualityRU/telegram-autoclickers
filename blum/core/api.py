@@ -322,7 +322,6 @@ class BlumAccount:
                     Category = self.Get_Tasks()   # Список заданий
                     for Section in Category:
                         tasks = Section.get('tasks', [])
-                        print(tasks)
                         for task in tasks:
                             if started == 2 or completed == 2:
                                 break
