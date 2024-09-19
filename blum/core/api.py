@@ -378,45 +378,6 @@ class BlumAccount:
                                         )
                                     sleep(randint(3, 6))
                                     completed += 1
-                        # for Task in Section['tasks']:
-                        #     if Task['status'] == 'NOT_STARTED' and Task[
-                        #         'title'
-                        #     ] not in [
-                        #         'Invite',
-                        #         'Farm',
-                        #     ]:   # Если задание ещё не начато
-                        #         if self.Start_Tasks(Task['id']):
-                        #             sleep(
-                        #                 randint(3, 6)
-                        #             )   # Промежуточное ожидание
-                        #             Claim_Tasks = self.Claim_Tasks(Task['id'])
-                        #             if Claim_Tasks['Status']:
-                        #                 self.Logging(
-                        #                     'Success',
-                        #                     self.Name,
-                        #                     '⚡️',
-                        #                     f'Задание выполнено! +{Claim_Tasks["Reward"]}',
-                        #                 )
-                        #                 sleep(
-                        #                     randint(3, 6)
-                        #                 )   # Промежуточное ожидание
-
-                        #     elif (
-                        #         Task['status'] == 'READY_FOR_CLAIM'
-                        #     ):   # Если задание уже начато
-                        #         Claim_Tasks = self.Claim_Tasks(Task['id'])
-
-                        #         if Claim_Tasks['Status']:
-                        #             self.Logging(
-                        #                 'Success',
-                        #                 self.Name,
-                        #                 '⚡️',
-                        #                 f'Задание выполнено! +{Claim_Tasks["Reward"]}',
-                        #             )
-                        #             sleep(
-                        #                 randint(3, 6)
-                        #             )   # Промежуточное ожидание
-
                     Waiting = randint(
                         3_500, 3_600
                     )   # Значение времени в секундах для ожидания
