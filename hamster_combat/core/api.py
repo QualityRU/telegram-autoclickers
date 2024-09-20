@@ -2002,10 +2002,14 @@ class HamsterKombatAccount:
             )
 
         # temporarily disabled
-        # if self.config["auto_finish_mini_game"]:
-        #     log.info(f"{w.rs}{w.g}[{self.account_name}]{w.rs}: Attempting to finish mini game.")
-        #     time.sleep(1)
-        #     self.StartMiniGame(AccountConfigData, AccountBasicData["accountInfo"]["id"])
+        if self.config['auto_finish_mini_game']:
+            log.info(
+                f'{w.rs}{w.g}[{self.account_name}]{w.rs}: Attempting to finish mini game.'
+            )
+            time.sleep(1)
+            self.StartMiniGame(
+                AccountConfigData, AccountBasicData['accountInfo']['id']
+            )
 
         # Start tapping
         if self.config['auto_tap']:
