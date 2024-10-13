@@ -174,8 +174,8 @@ class BlumAccount:
     def Play(self) -> None:
         """Запуск игры"""
 
-        URL_1 = 'https://game-domain.blum.codes/api/v1/game/play'
-        URL_2 = 'https://game-domain.blum.codes/api/v1/game/claim'
+        URL_1 = 'https://game-domain.blum.codes/api/v2/game/play'
+        URL_2 = 'https://game-domain.blum.codes/api/v2/game/claim'
         Headers_1_bear = HEADERS.copy()
         Headers_1_bear['authorization'] = f'Bearer {self.Token}'
 
